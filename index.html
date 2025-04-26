@@ -3,6 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      property="og:title"
+      content="YouTube Channel Color Palette"
+      id="ogTitle"
+    />
+    <meta
+      property="og:description"
+      content="See the colors extracted from this YouTube channel's profile picture"
+      id="ogDescription"
+    />
+    <meta property="og:url" content="" id="ogUrl" />
+    <meta property="og:type" content="website" />
+    <meta property="theme-color" content="#ff0000" id="themeColor" />
     <title>YouTube Channel Color Palette Extractor</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
     <link
@@ -2229,6 +2242,30 @@
         });
       }
 
+      function updateEmbedMetadata(channelData, colorResults) {
+        const channelName = channelData.channelDetails.name;
+        const vibrantColor = colorResults.vibrantColor.hex;
+
+        document
+          .getElementById('ogTitle')
+          .setAttribute('content', `${channelName}'s YouTube Color Palette`);
+        document
+          .getElementById('ogDescription')
+          .setAttribute(
+            'content',
+            `See the colors extracted from ${channelName}'s YouTube profile picture`
+          );
+        document
+          .getElementById('ogImage')
+          .setAttribute('content', channelData.channelDetails.profilePicture);
+        document
+          .getElementById('ogUrl')
+          .setAttribute('content', window.location.href);
+        document
+          .getElementById('themeColor')
+          .setAttribute('content', vibrantColor);
+      }
+
       function getTimeAgo(date) {
         const seconds = Math.floor((new Date() - date) / 1000);
 
@@ -2535,6 +2572,7 @@
           updateUI(channelData, colorResults);
           saveToHistory(channelData, colorResults);
           updateUrlWithChannelId(channelData.channelDetails.id);
+          updateEmbedMetadata(channelData, colorResults);
 
           return { channelData, colorResults };
         } catch (error) {
