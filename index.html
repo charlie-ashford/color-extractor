@@ -3,8 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YouTube Channel Vibrant Color Finder</title>
+    <title>YouTube Channel Color Palette Extractor</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    <link
+      rel="icon"
+      href="https://www.youtube.com/s/desktop/a98f809d/img/favicon.ico"
+      type="image/png"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -12,11 +21,21 @@
     <style>
       :root {
         --accent-color: #ff5733;
-        --accent-light: rgba(77, 77, 255, 0.1);
+        --accent-light: rgba(255, 87, 51, 0.1);
         --text-color: #ffffff;
-        --bg-color: #fafafa;
+        --bg-color: #f8f9fa;
         --card-bg: #ffffff;
         --shadow-color: rgba(0, 0, 0, 0.08);
+        --border-radius: 16px;
+        --transition: all 0.3s ease;
+        --dark-mode-bg: #121212;
+        --dark-mode-card: #1e1e1e;
+        --dark-mode-text: #f0f0f0;
+        --dark-mode-secondary: #a0a0a0;
+        --dark-mode-input: #2d2d2d;
+        --dark-mode-border: #333;
+        --icon-color: #555;
+        --dark-mode-icon: #aaa;
       }
 
       * {
@@ -26,19 +45,140 @@
       }
 
       body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-          Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        font-family: 'Inter', sans-serif;
         background-color: var(--bg-color);
         color: #333;
         line-height: 1.6;
-        transition: background-color 0.5s ease;
+        transition: background-color 0.5s ease, color 0.5s ease;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
       }
 
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      .channel-name,
+      .color-title,
+      .palette-title,
+      .harmony-title,
+      .export-title,
+      .history-title,
+      .modal-title {
+        font-family: 'Poppins', sans-serif;
+      }
+
+      body.dark-mode {
+        background-color: var(--dark-mode-bg);
+        color: var(--dark-mode-text);
+      }
+
+      body.dark-mode .card-bg,
+      body.dark-mode .search-container,
+      body.dark-mode .channel-card,
+      body.dark-mode .color-card,
+      body.dark-mode .palette-container,
+      body.dark-mode .export-options,
+      body.dark-mode .history-container,
+      body.dark-mode .color-harmony {
+        background-color: var(--dark-mode-card);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      body.dark-mode .subtitle,
+      body.dark-mode .channel-handle,
+      body.dark-mode .palette-description,
+      body.dark-mode .harmony-description {
+        color: var(--dark-mode-secondary);
+      }
+
+      body.dark-mode input {
+        background: var(--dark-mode-input);
+        border-color: var(--dark-mode-border);
+        color: var(--dark-mode-text);
+      }
+
+      body.dark-mode .color-value {
+        background-color: var(--dark-mode-input);
+      }
+
+      body.dark-mode .example-chip {
+        background: var(--dark-mode-input);
+        color: var(--dark-mode-text);
+      }
+
+      body.dark-mode .example-chip:hover {
+        background: #3d3d3d;
+      }
+
+      body.dark-mode .palette-header,
+      body.dark-mode .harmony-header,
+      body.dark-mode .history-header,
+      body.dark-mode .modal-header {
+        border-bottom: 1px solid var(--dark-mode-border);
+      }
+
+      body.dark-mode .color-label {
+        color: var(--dark-mode-secondary);
+      }
+
+      body.dark-mode .history-item {
+        border-bottom: 1px solid var(--dark-mode-border);
+      }
+
+      body.dark-mode .history-item:hover {
+        background: #2a2a2a;
+      }
+
+      body.dark-mode .history-timestamp {
+        color: var(--dark-mode-secondary);
+      }
+
+      body.dark-mode .history-color {
+        border-color: var(--dark-mode-card);
+      }
+
+      body.dark-mode .error-message {
+        background-color: rgba(231, 76, 60, 0.1);
+      }
+
+      body.dark-mode .css-code {
+        background: var(--dark-mode-input);
+      }
+
+      body.dark-mode .palette-action-btn,
+      body.dark-mode .export-btn,
+      body.dark-mode .stat-badge {
+        background: var(--dark-mode-input);
+        color: var(--dark-mode-text);
+      }
+
+      body.dark-mode .palette-action-btn:hover,
+      body.dark-mode .export-btn:hover {
+        background: #3d3d3d;
+      }
+
+      body.dark-mode .scheme-title,
+      body.dark-mode .color-title {
+        color: var(--dark-mode-text);
+      }
+
+      body.dark-mode .color-title i,
+      body.dark-mode .palette-title i,
+      body.dark-mode .harmony-title i,
+      body.dark-mode .export-title i,
+      body.dark-mode .history-title i,
+      body.dark-mode .scheme-title i,
+      body.dark-mode .stat-badge i,
+      body.dark-mode .export-btn i {
+        color: var(--accent-color);
+      }
+
       .app-container {
-        max-width: 1000px;
+        max-width: 1200px;
         width: 100%;
         margin: 0 auto;
         padding: 2rem;
@@ -51,34 +191,56 @@
         position: relative;
       }
 
+      .theme-toggle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: inherit;
+        transition: var(--transition);
+        box-shadow: none;
+      }
+
+      .theme-toggle:hover {
+        transform: rotate(15deg);
+      }
+
       h1 {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
         font-weight: 800;
         margin-bottom: 0.5rem;
         color: #1a1a1a;
+        background: linear-gradient(90deg, #ff5733, #ff2d75);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+      }
+
+      body.dark-mode h1 {
+        color: #ffffff;
       }
 
       .subtitle {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         color: #666;
-        max-width: 600px;
+        max-width: 700px;
         margin: 0 auto;
       }
 
       .search-container {
-        position: relative;
-        max-width: 600px;
-        margin: 0 auto 3rem;
-        background: var(--card-bg);
         border-radius: 12px;
-        padding: 2rem;
-        box-shadow: 0 8px 30px var(--shadow-color);
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        display: block;
       }
 
       .input-wrapper {
         position: relative;
         display: flex;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
       }
 
       .input-wrapper i {
@@ -87,16 +249,17 @@
         top: 50%;
         transform: translateY(-50%);
         color: #999;
+        z-index: 2;
       }
 
       input {
         flex: 1;
-        padding: 1rem 1rem 1rem 3rem;
+        padding: 1.2rem 1rem 1.2rem 3rem;
         border: 2px solid #eee;
-        border-radius: 8px;
+        border-radius: 12px;
         font-size: 1rem;
         background: #f5f5f5;
-        transition: all 0.3s ease;
+        transition: var(--transition);
       }
 
       input:focus {
@@ -106,22 +269,27 @@
         box-shadow: 0 0 0 4px var(--accent-light);
       }
 
+      body.dark-mode input:focus {
+        background: var(--dark-mode-input);
+        box-shadow: 0 0 0 4px rgba(255, 87, 51, 0.2);
+      }
+
       button {
         padding: 1rem 2rem;
         background-color: var(--accent-color);
         color: var(--text-color);
         border: none;
-        border-radius: 8px;
+        border-radius: 12px;
         font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--transition);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         margin-left: 0.75rem;
       }
 
       button:hover {
-        box-shadow: 0 6px 16px rgba(var(--accent-rgb), 0.4);
+        box-shadow: 0 6px 16px rgba(255, 87, 51, 0.4);
       }
 
       button:active {
@@ -144,7 +312,7 @@
         font-size: 0.9rem;
         color: #555;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: var(--transition);
       }
 
       .example-chip:hover {
@@ -173,16 +341,21 @@
       .channel-card {
         display: flex;
         background: var(--card-bg);
-        border-radius: 16px;
+        border-radius: var(--border-radius);
         overflow: hidden;
         box-shadow: 0 8px 30px var(--shadow-color);
         margin-bottom: 3rem;
+        transition: var(--transition);
+      }
+
+      .channel-card:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
       }
 
       .channel-banner {
         position: relative;
         flex: 1;
-        min-height: 200px;
+        min-height: 220px;
         background: var(--accent-color);
         display: flex;
         align-items: center;
@@ -198,6 +371,11 @@
         right: 0;
         bottom: 0;
         z-index: 1;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.2),
+          rgba(0, 0, 0, 0)
+        );
       }
 
       .channel-info {
@@ -210,14 +388,22 @@
 
       .profile-container {
         position: relative;
-        width: 120px;
-        height: 120px;
+        width: 140px;
+        height: 140px;
         border-radius: 50%;
         overflow: hidden;
-        border: 4px solid white;
+        border: 5px solid white;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         z-index: 2;
-        transition: all 0.3s ease;
+        transition: var(--transition);
+      }
+
+      body.dark-mode .profile-container {
+        border-color: var(--dark-mode-card);
+      }
+
+      .profile-container:hover {
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
       }
 
       .profile-img {
@@ -227,7 +413,7 @@
       }
 
       .channel-name {
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
       }
@@ -238,7 +424,13 @@
         margin-bottom: 1rem;
       }
 
-      .subscribers {
+      .channel-stats {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .stat-badge {
         display: inline-flex;
         align-items: center;
         background: #f5f5f5;
@@ -248,16 +440,28 @@
         font-weight: 600;
       }
 
-      .subscribers i {
+      .stat-badge i {
         margin-right: 0.5rem;
-        color: #ff0000;
+        color: var(--accent-color);
+      }
+
+      .color-cards-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
       }
 
       .color-card {
         background: var(--card-bg);
-        border-radius: 16px;
+        border-radius: var(--border-radius);
         overflow: hidden;
         box-shadow: 0 8px 30px var(--shadow-color);
+        transition: var(--transition);
+      }
+
+      .color-card:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
       }
 
       .color-preview {
@@ -267,6 +471,19 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
+      }
+
+      .color-preview-label {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
       }
 
       .color-details {
@@ -295,10 +512,20 @@
       .color-value {
         background-color: #f5f5f5;
         padding: 1rem;
-        border-radius: 8px;
+        border-radius: 12px;
         font-family: 'SF Mono', SFMono-Regular, ui-monospace, Monaco, Menlo,
           Consolas, monospace;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
+        position: relative;
+        transition: var(--transition);
+      }
+
+      .color-value:hover {
+        background-color: #eaeaea;
+      }
+
+      body.dark-mode .color-value:hover {
+        background-color: #333;
       }
 
       .color-label {
@@ -312,7 +539,7 @@
       }
 
       .copy-button {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         color: var(--accent-color);
         background: none;
         border: none;
@@ -321,12 +548,448 @@
         cursor: pointer;
         box-shadow: none;
         float: right;
+        min-width: 50px;
+        text-align: center;
+        position: relative;
       }
 
       .copy-button:hover {
         text-decoration: underline;
         transform: none;
         box-shadow: none;
+      }
+
+      .palette-container {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: 0 8px 30px var(--shadow-color);
+        margin-bottom: 3rem;
+        transition: var(--transition);
+      }
+
+      .palette-container:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      .palette-header {
+        padding: 2rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .palette-title-container {
+        flex: 1;
+      }
+
+      .palette-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+      }
+
+      .palette-title i {
+        margin-right: 0.75rem;
+        color: var(--accent-color);
+      }
+
+      .palette-description {
+        margin-top: 0.5rem;
+        color: #666;
+      }
+
+      .palette-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .palette-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        background: #f0f0f0;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: #555;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: none;
+      }
+
+      .palette-action-btn:hover {
+        background: #e0e0e0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .palette-action-btn i {
+        margin-right: 0.5rem;
+      }
+
+      .palette-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+      }
+
+      .palette-color {
+        aspect-ratio: 1;
+        position: relative;
+        cursor: pointer;
+        transition: var(--transition);
+        overflow: hidden;
+      }
+
+      .palette-color:hover {
+        transform: scale(1.02);
+        z-index: 10;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .palette-color-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+      }
+
+      .palette-color:hover .palette-color-content {
+        transform: translateY(-100%);
+      }
+
+      .palette-color-hex {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      }
+
+      .palette-color-index {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      }
+
+      .palette-color-copy {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+      }
+
+      .palette-color:hover .palette-color-copy {
+        transform: translateY(0);
+      }
+
+      .palette-color-copy i {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .palette-color-copy-text {
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .color-harmony {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: 0 8px 30px var(--shadow-color);
+        margin-bottom: 3rem;
+        transition: var(--transition);
+      }
+
+      .color-harmony:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      .harmony-header {
+        padding: 2rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .harmony-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+      }
+
+      .harmony-title i {
+        margin-right: 0.75rem;
+        color: var(--accent-color);
+      }
+
+      .harmony-description {
+        margin-top: 0.5rem;
+        color: #666;
+      }
+
+      .harmony-schemes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      .harmony-scheme {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .scheme-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+      }
+
+      .scheme-title i {
+        margin-right: 0.5rem;
+        color: var(--accent-color);
+      }
+
+      .scheme-colors {
+        display: flex;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .scheme-color {
+        flex: 1;
+        position: relative;
+        cursor: pointer;
+        transition: var(--transition);
+        overflow: hidden;
+      }
+
+      .scheme-color:hover {
+        z-index: 5;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .scheme-color-copy {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .scheme-color:hover .scheme-color-copy {
+        opacity: 1;
+      }
+
+      .scheme-color-copy i {
+        font-size: 1.2rem;
+      }
+
+      .export-options {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: 0 8px 30px var(--shadow-color);
+        margin-bottom: 3rem;
+        padding: 2rem;
+        transition: var(--transition);
+      }
+
+      .export-options:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      .export-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+      }
+
+      .export-title i {
+        margin-right: 0.75rem;
+        color: var(--accent-color);
+      }
+
+      .export-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .export-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.8rem 1.5rem;
+        background: #f5f5f5;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #333;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .export-btn:hover {
+        background: #e0e0e0;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .export-btn i {
+        margin-right: 0.75rem;
+        font-size: 1.2rem;
+        color: var(--accent-color);
+      }
+
+      .history-container {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: 0 8px 30px var(--shadow-color);
+        margin-bottom: 3rem;
+        transition: var(--transition);
+      }
+
+      .history-container:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      .history-header {
+        padding: 2rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .history-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+      }
+
+      .history-title i {
+        margin-right: 0.75rem;
+        color: var(--accent-color);
+      }
+
+      .clear-history {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: var(--transition);
+        box-shadow: none;
+        padding: 0.5rem 1rem;
+      }
+
+      .clear-history:hover {
+        color: #ff5733;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .history-items {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 0;
+      }
+
+      .history-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .history-item:hover {
+        background: #f5f5f5;
+      }
+
+      .history-item:last-child {
+        border-bottom: none;
+      }
+
+      .history-thumbnail {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 1rem;
+        flex-shrink: 0;
+      }
+
+      .history-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .history-info {
+        flex: 1;
+      }
+
+      .history-channel-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .history-timestamp {
+        font-size: 0.8rem;
+        color: #999;
+      }
+
+      .history-colors {
+        display: flex;
+        margin-left: 1rem;
+      }
+
+      .history-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-left: -5px;
+        border: 2px solid white;
       }
 
       .loading {
@@ -340,7 +1003,7 @@
       .spinner {
         width: 40px;
         height: 40px;
-        border: 4px solid rgba(var(--accent-rgb), 0.1);
+        border: 4px solid rgba(255, 87, 51, 0.1);
         border-radius: 50%;
         border-left-color: var(--accent-color);
         animation: spin 1s linear infinite;
@@ -366,63 +1029,668 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       }
 
-      .color-palette {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 1.5rem;
-      }
-
-      .palette-color {
-        width: 32px;
-        height: 32px;
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 1rem 1.5rem;
         border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .palette-color:hover {
-        transform: scale(1.1);
-      }
-
-      .palette-title {
         font-size: 0.9rem;
-        font-weight: 600;
-        color: #666;
-        margin-bottom: 0.5rem;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        pointer-events: none;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s ease;
+      }
+
+      .modal.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-content {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      .modal.show .modal-content {
+        transform: translateY(0);
+      }
+
+      .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #999;
+        transition: var(--transition);
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+      }
+
+      .modal-close:hover {
+        color: var(--accent-color);
+        transform: none;
+        box-shadow: none;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .css-code {
+        background: #f5f5f5;
+        padding: 1.5rem;
+        border-radius: 8px;
+        font-family: 'SF Mono', SFMono-Regular, ui-monospace, Monaco, Menlo,
+          Consolas, monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+        white-space: pre;
+        margin-bottom: 1.5rem;
+      }
+
+      .copy-css-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
       }
 
       @media (max-width: 768px) {
+        body {
+          background-color: var(--dark-mode-bg);
+          color: var(--dark-mode-text);
+        }
+
+        .card-bg,
+        .search-container,
+        .channel-card,
+        .color-card,
+        .palette-container,
+        .export-options,
+        .history-container,
+        .color-harmony {
+          background-color: var(--dark-mode-card);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle,
+        .channel-handle,
+        .palette-description,
+        .harmony-description {
+          color: var(--dark-mode-secondary);
+        }
+
+        input {
+          background: var(--dark-mode-input);
+          border-color: var(--dark-mode-border);
+          color: var(--dark-mode-text);
+        }
+
+        .color-value {
+          background-color: var(--dark-mode-input);
+        }
+
+        .example-chip {
+          background: var(--dark-mode-input);
+          color: var(--dark-mode-text);
+        }
+
+        .palette-header,
+        .harmony-header,
+        .history-header,
+        .modal-header {
+          border-bottom: 1px solid var(--dark-mode-border);
+        }
+
+        .color-label {
+          color: var(--dark-mode-secondary);
+        }
+
+        .history-item {
+          border-bottom: 1px solid var(--dark-mode-border);
+        }
+
+        .history-timestamp {
+          color: var(--dark-mode-secondary);
+        }
+
+        .history-color {
+          border-color: var(--dark-mode-card);
+        }
+
+        .palette-action-btn,
+        .export-btn,
+        .stat-badge {
+          background: var(--dark-mode-input);
+          color: var(--dark-mode-text);
+        }
+
+        .theme-toggle {
+          display: none;
+        }
+
         .app-container {
           padding: 1rem;
         }
 
+        .header {
+          margin-bottom: 1.5rem;
+          text-align: center;
+        }
+
+        h1 {
+          font-size: 1.75rem;
+          margin-bottom: 0.5rem;
+          background: linear-gradient(90deg, #ff5733, #ff2d75);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+          font-size: 0.9rem;
+          padding: 0 0.5rem;
+        }
+
+        .search-container {
+          border-radius: 12px;
+          padding: 1.25rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .input-wrapper {
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .input-wrapper i {
+          top: 1.65rem;
+        }
+
+        input {
+          width: 100%;
+          padding: 1rem 1rem 1rem 3rem;
+        }
+
+        input:focus {
+          border-color: var(--accent-color);
+          box-shadow: 0 0 0 3px rgba(255, 87, 51, 0.2);
+        }
+
+        button#analyzeBtn {
+          width: 100%;
+          margin: 0;
+          margin-top: 0.75rem;
+          padding: 0.875rem;
+          border-radius: 8px;
+          font-size: 0.95rem;
+        }
+
+        .examples {
+          display: flex;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          padding-bottom: 0.5rem;
+          margin-top: 1rem;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+
+        .examples::-webkit-scrollbar {
+          display: none;
+        }
+
+        .example-chip {
+          flex: 0 0 auto;
+          white-space: nowrap;
+          margin-right: 0.5rem;
+          background: var(--dark-mode-input);
+          color: var(--dark-mode-text);
+        }
+
+        .example-chip:hover {
+          background: #3d3d3d;
+        }
+
         .channel-card {
+          border-radius: 12px;
+          overflow: hidden;
+          margin-bottom: 1.5rem;
           flex-direction: column;
         }
 
         .channel-banner {
-          height: 150px;
+          min-height: 100px;
         }
 
         .profile-container {
-          width: 100px;
-          height: 100px;
-          margin: -50px auto 1rem;
+          width: 80px;
+          height: 80px;
+          border-width: 3px;
+          border-color: var(--dark-mode-card);
         }
 
         .channel-info {
           text-align: center;
-          padding: 0 1.5rem 1.5rem;
+          padding: 0.75rem 1rem 1.25rem;
+        }
+
+        .channel-name {
+          font-size: 1.4rem;
+          margin-top: 0.5rem;
+          margin-bottom: 0.25rem;
+          color: var(--dark-mode-text);
+        }
+
+        .channel-handle {
+          font-size: 0.9rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .channel-stats {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .stat-badge {
+          font-size: 0.8rem;
+          padding: 0.4rem 0.75rem;
+        }
+
+        .stat-badge i {
+          color: var(--accent-color);
+        }
+
+        .color-cards-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .color-card {
+          border-radius: 12px;
+          overflow: hidden;
+        }
+
+        .color-preview {
+          height: 80px;
+        }
+
+        .color-details {
+          padding: 1rem;
+        }
+
+        .color-title {
+          font-size: 1.1rem;
+          margin-bottom: 0.75rem;
+          color: var(--dark-mode-text);
+        }
+
+        .color-title i {
+          color: var(--accent-color);
         }
 
         .color-values {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .color-value {
+          padding: 0.75rem;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .color-label {
+          font-size: 0.7rem;
+          margin-bottom: 0;
+          margin-right: 0.5rem;
+        }
+
+        .copy-button {
+          color: var(--accent-color);
+        }
+
+        .palette-container {
+          border-radius: 12px;
+          overflow: hidden;
+          margin-bottom: 1.5rem;
+        }
+
+        .palette-header {
+          padding: 1rem;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .palette-title {
+          font-size: 1.1rem;
+          color: var(--dark-mode-text);
+        }
+
+        .palette-title i {
+          color: var(--accent-color);
+        }
+
+        .palette-description {
+          font-size: 0.85rem;
+          margin-top: 0.25rem;
+        }
+
+        .palette-actions {
+          display: flex;
+          width: 100%;
+          margin-top: 0.75rem;
+          gap: 0.5rem;
+        }
+
+        .palette-action-btn {
+          flex: 1;
+          font-size: 0.85rem;
+          padding: 0.5rem;
+          border-radius: 6px;
+        }
+
+        .palette-action-btn:hover {
+          background: #3d3d3d;
+        }
+
+        .palette-action-btn i {
+          margin-right: 0.25rem;
+        }
+
+        .palette-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+        }
+
+        .palette-color-content {
+          padding: 0.25rem;
+        }
+
+        .palette-color-hex {
+          font-size: 0.75rem;
+          margin-bottom: 0.25rem;
+        }
+
+        .palette-color-index {
+          font-size: 0.65rem;
+        }
+
+        .color-harmony {
+          border-radius: 12px;
+          overflow: hidden;
+          margin-bottom: 1.5rem;
+        }
+
+        .harmony-header {
+          padding: 1rem;
+        }
+
+        .harmony-title {
+          font-size: 1.1rem;
+          color: var(--dark-mode-text);
+        }
+
+        .harmony-title i {
+          color: var(--accent-color);
+        }
+
+        .harmony-description {
+          font-size: 0.85rem;
+          margin-top: 0.25rem;
+        }
+
+        .harmony-schemes {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          padding: 1rem;
+        }
+
+        .scheme-title {
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+          color: var(--dark-mode-text);
+        }
+
+        .scheme-title i {
+          color: var(--accent-color);
+        }
+
+        .scheme-colors {
+          height: 50px;
+          border-radius: 6px;
+        }
+
+        .export-options {
+          border-radius: 12px;
+          padding: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .export-title {
+          font-size: 1.1rem;
+          margin-bottom: 1rem;
+          color: var(--dark-mode-text);
+        }
+
+        .export-title i {
+          color: var(--accent-color);
+        }
+
+        .export-buttons {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.75rem;
+        }
+
+        .export-btn {
+          font-size: 0.85rem;
+          padding: 0.75rem 0.5rem;
+          border-radius: 6px;
+          justify-content: center;
+        }
+
+        .export-btn:hover {
+          background: #3d3d3d;
+        }
+
+        .export-btn i {
+          margin-right: 0.5rem;
+          color: var(--accent-color);
+        }
+
+        .history-container {
+          border-radius: 12px;
+          overflow: hidden;
+          margin-bottom: 1.5rem;
+        }
+
+        .history-header {
+          padding: 1rem;
+          display: flex;
+          align-items: center;
+        }
+
+        .history-title {
+          font-size: 1.1rem;
+          flex: 1;
+          color: var(--dark-mode-text);
+        }
+
+        .history-title i {
+          color: var(--accent-color);
+        }
+
+        .clear-history {
+          position: relative;
+          right: 0;
+          font-size: 0.8rem;
+          padding: 0.4rem 0.75rem;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 6px;
+          color: var(--dark-mode-secondary);
+          box-shadow: none;
+        }
+
+        .clear-history:hover {
+          color: var(--accent-color);
+          background: rgba(255, 255, 255, 0.15);
+          transform: none;
+          box-shadow: none;
+        }
+
+        .history-items {
+          max-height: 300px;
+          padding: 0;
+        }
+
+        .history-item {
+          padding: 0.75rem 1rem;
+          border-bottom: 1px solid var(--dark-mode-border);
+        }
+
+        .history-item:hover {
+          background: #2a2a2a;
+        }
+
+        .history-thumbnail {
+          width: 40px;
+          height: 40px;
+        }
+
+        .history-channel-name {
+          font-size: 0.9rem;
+          color: var(--dark-mode-text);
+        }
+
+        .history-timestamp {
+          font-size: 0.75rem;
+        }
+
+        .history-colors {
+          display: flex;
+        }
+
+        .history-color {
+          width: 15px;
+          height: 15px;
+          margin-left: -3px;
+          border: 1px solid var(--dark-mode-card);
+        }
+
+        .modal-content {
+          width: 92%;
+          max-width: 92%;
+          border-radius: 12px;
+          background: var(--dark-mode-card);
+        }
+
+        .modal-header {
+          padding: 1rem;
+          border-bottom: 1px solid var(--dark-mode-border);
+        }
+
+        .modal-title {
+          font-size: 1.1rem;
+          color: var(--dark-mode-text);
+        }
+
+        .modal-close {
+          color: var(--dark-mode-secondary);
+        }
+
+        .modal-body {
+          padding: 1rem;
+        }
+
+        .css-code {
+          padding: 0.75rem;
+          border-radius: 6px;
+          font-size: 0.8rem;
+          margin-bottom: 1rem;
+          background: var(--dark-mode-input);
+          color: var(--dark-mode-text);
+        }
+
+        .toast {
+          left: 16px;
+          right: 16px;
+          bottom: 16px;
+          border-radius: 8px;
+          text-align: center;
+          font-size: 0.9rem;
+        }
+
+        .error-message {
+          background-color: rgba(231, 76, 60, 0.1);
+          color: #e74c3c;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .palette-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .export-buttons {
           grid-template-columns: 1fr;
         }
 
-        h1 {
-          font-size: 2rem;
+        .scheme-colors {
+          height: 40px;
         }
       }
     </style>
@@ -430,10 +1698,14 @@
   <body>
     <div class="app-container">
       <div class="header">
-        <h1>YouTube Color Extractor</h1>
+        <h1>YouTube Color Palette Extractor</h1>
         <p class="subtitle">
-          Find the most vibrant color from any YouTube channel profile picture
+          Extract vibrant colors and create beautiful palettes from any YouTube
+          channel profile picture
         </p>
+        <button class="theme-toggle" id="themeToggle">
+          <i class="fas fa-moon"></i>
+        </button>
       </div>
 
       <div class="search-container">
@@ -442,7 +1714,7 @@
           <input
             type="text"
             id="channelIdInput"
-            placeholder="Enter YouTube Channel ID"
+            placeholder="Enter YouTube Channel ID, handle (@username), or URL"
             autocomplete="off"
           />
           <button id="analyzeBtn">Analyze</button>
@@ -456,6 +1728,12 @@
           >
           <span class="example-chip" data-id="UCY1kMZp36IQSyNx_9h4mpCg"
             ><i class="fas fa-user-circle"></i>Mark Rober</span
+          >
+          <span class="example-chip" data-id="UCBJycsmduvYEL83R_U4JriQ"
+            ><i class="fas fa-user-circle"></i>MKBHD</span
+          >
+          <span class="example-chip" data-id="UCsBjURrPoezykLs9EqgamOA"
+            ><i class="fas fa-user-circle"></i>Fireship</span
           >
         </div>
         <div class="error-message" id="errorMessage"></div>
@@ -481,39 +1759,185 @@
           <div class="channel-info" id="channelInfo">
             <h2 class="channel-name" id="channelName">Channel Name</h2>
             <p class="channel-handle" id="channelHandle">@handle</p>
-            <div class="subscribers" id="subscribers">
-              <i class="fas fa-users"></i>
-              <span id="subscriberCount">0</span>
-              <span>&nbsp;subscribers</span>
+            <div class="channel-stats">
+              <div class="stat-badge" id="subscribers">
+                <i class="fas fa-users"></i>
+                <span id="subscriberCount">0</span>
+                <span>&nbsp;subscribers</span>
+              </div>
+              <div class="stat-badge" id="videoCount">
+                <i class="fas fa-video"></i>
+                <span id="videoCountValue">0</span>
+                <span>&nbsp;videos</span>
+              </div>
+              <div class="stat-badge" id="viewCount">
+                <i class="fas fa-eye"></i>
+                <span id="viewCountValue">0</span>
+                <span>&nbsp;views</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="color-card">
-          <div class="color-preview" id="colorPreview"></div>
-          <div class="color-details">
-            <h3 class="color-title">
-              <i class="fas fa-eye-dropper"></i>
-              Color Details
-            </h3>
-            <div class="color-values">
-              <div class="color-value">
-                <span class="color-label">HEX</span>
-                <span id="hexValue">#000000</span>
-                <button class="copy-button" data-value="hex">Copy</button>
-              </div>
-              <div class="color-value">
-                <span class="color-label">RGB</span>
-                <span id="rgbValue">rgb(0, 0, 0)</span>
-                <button class="copy-button" data-value="rgb">Copy</button>
-              </div>
-              <div class="color-value">
-                <span class="color-label">HSL</span>
-                <span id="hslValue">hsl(0, 0%, 0%)</span>
-                <button class="copy-button" data-value="hsl">Copy</button>
+        <div class="color-cards-container">
+          <div class="color-card">
+            <div class="color-preview" id="vibrantColorPreview">
+              <div class="color-preview-label">Most Vibrant</div>
+            </div>
+            <div class="color-details">
+              <h3 class="color-title">
+                <i class="fas fa-eye-dropper"></i>
+                Vibrant Color
+              </h3>
+              <div class="color-values">
+                <div class="color-value">
+                  <span class="color-label">HEX</span>
+                  <span id="vibrantHexValue">#000000</span>
+                  <button class="copy-button" data-value="vibrantHex">
+                    Copy
+                  </button>
+                </div>
+                <div class="color-value">
+                  <span class="color-label">RGB</span>
+                  <span id="vibrantRgbValue">rgb(0, 0, 0)</span>
+                  <button class="copy-button" data-value="vibrantRgb">
+                    Copy
+                  </button>
+                </div>
+                <div class="color-value">
+                  <span class="color-label">HSL</span>
+                  <span id="vibrantHslValue">hsl(0, 0%, 0%)</span>
+                  <button class="copy-button" data-value="vibrantHsl">
+                    Copy
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+
+          <div class="color-card">
+            <div class="color-preview" id="dominantColorPreview">
+              <div class="color-preview-label">Most Dominant</div>
+            </div>
+            <div class="color-details">
+              <h3 class="color-title">
+                <i class="fas fa-paint-brush"></i>
+                Dominant Color
+              </h3>
+              <div class="color-values">
+                <div class="color-value">
+                  <span class="color-label">HEX</span>
+                  <span id="dominantHexValue">#000000</span>
+                  <button class="copy-button" data-value="dominantHex">
+                    Copy
+                  </button>
+                </div>
+                <div class="color-value">
+                  <span class="color-label">RGB</span>
+                  <span id="dominantRgbValue">rgb(0, 0, 0)</span>
+                  <button class="copy-button" data-value="dominantRgb">
+                    Copy
+                  </button>
+                </div>
+                <div class="color-value">
+                  <span class="color-label">HSL</span>
+                  <span id="dominantHslValue">hsl(0, 0%, 0%)</span>
+                  <button class="copy-button" data-value="dominantHsl">
+                    Copy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-container">
+          <div class="palette-header">
+            <div class="palette-title-container">
+              <h3 class="palette-title">
+                <i class="fas fa-palette"></i>
+                Color Palette
+              </h3>
+              <p class="palette-description">
+                8 most prominent colors extracted from the channel profile
+                picture. Click on any color to copy its HEX code.
+              </p>
+            </div>
+            <div class="palette-actions">
+              <button class="palette-action-btn" id="shufflePaletteBtn">
+                <i class="fas fa-random"></i>Shuffle
+              </button>
+              <button class="palette-action-btn" id="sortPaletteBtn">
+                <i class="fas fa-sort"></i>Sort
+              </button>
+            </div>
+          </div>
+          <div class="palette-grid" id="paletteGrid"></div>
+        </div>
+
+        <div class="color-harmony">
+          <div class="harmony-header">
+            <h3 class="harmony-title">
+              <i class="fas fa-magic"></i>
+              Color Harmonies
+            </h3>
+            <p class="harmony-description">
+              Color schemes based on the vibrant color using color theory
+              principles. Click any color to copy its HEX code.
+            </p>
+          </div>
+          <div class="harmony-schemes" id="harmonySchemes"></div>
+        </div>
+
+        <div class="export-options">
+          <h3 class="export-title">
+            <i class="fas fa-file-export"></i>
+            Export Options
+          </h3>
+          <div class="export-buttons">
+            <button class="export-btn" id="exportCssBtn">
+              <i class="fab fa-css3-alt"></i>
+              CSS Variables
+            </button>
+            <button class="export-btn" id="exportSassBtn">
+              <i class="fab fa-sass"></i>
+              SASS Variables
+            </button>
+            <button class="export-btn" id="exportPngBtn">
+              <i class="fas fa-image"></i>
+              PNG Image
+            </button>
+          </div>
+        </div>
+
+        <div class="history-container" id="historyContainer">
+          <div class="history-header">
+            <h3 class="history-title">
+              <i class="fas fa-history"></i>
+              Recent Channels
+            </h3>
+            <button class="clear-history" id="clearHistoryBtn">
+              Clear History
+            </button>
+          </div>
+          <div class="history-items" id="historyItems"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="modal" id="cssModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">CSS Variables</h3>
+          <button class="modal-close" id="closeCssModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="css-code" id="cssCode"></div>
+          <button class="export-btn copy-css-btn" id="copyCssBtn">
+            <i class="fas fa-copy"></i>Copy to Clipboard
+          </button>
         </div>
       </div>
     </div>
@@ -523,6 +1947,17 @@
         return (
           '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)
         );
+      }
+
+      function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result
+          ? [
+              parseInt(result[1], 16),
+              parseInt(result[2], 16),
+              parseInt(result[3], 16),
+            ]
+          : null;
       }
 
       function rgbToHsl(r, g, b) {
@@ -564,6 +1999,34 @@
         };
       }
 
+      function hslToRgb(h, s, l) {
+        h /= 360;
+        s /= 100;
+        l /= 100;
+        let r, g, b;
+
+        if (s === 0) {
+          r = g = b = l;
+        } else {
+          const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+          };
+
+          const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+          const p = 2 * l - q;
+          r = hue2rgb(p, q, h + 1 / 3);
+          g = hue2rgb(p, q, h);
+          b = hue2rgb(p, q, h - 1 / 3);
+        }
+
+        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+      }
+
       function getVibrancy(rgb) {
         const max = Math.max(rgb[0], rgb[1], rgb[2]);
         const min = Math.min(rgb[0], rgb[1], rgb[2]);
@@ -580,48 +2043,295 @@
         );
       }
 
-      async function analyzePalette(imageUrl) {
-        try {
-          const colorThief = new ColorThief();
+      function getTextColorForBackground(rgb) {
+        const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+        return brightness > 125 ? '#333333' : '#ffffff';
+      }
 
+      function formatColorData(rgbArray) {
+        const hex = rgbToHex(rgbArray[0], rgbArray[1], rgbArray[2]);
+        const hsl = rgbToHsl(rgbArray[0], rgbArray[1], rgbArray[2]);
+
+        return {
+          rgbArray: rgbArray,
+          hex: hex,
+          rgb: `rgb(${rgbArray[0]}, ${rgbArray[1]}, ${rgbArray[2]})`,
+          hsl: `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`,
+          hslObj: hsl,
+          textColor: getTextColorForBackground(rgbArray),
+        };
+      }
+
+      function generateColorHarmonies(color) {
+        const hsl = color.hslObj;
+        const harmonies = {
+          complementary: [
+            { h: hsl.h, s: hsl.s, l: hsl.l },
+            { h: (hsl.h + 180) % 360, s: hsl.s, l: hsl.l },
+          ],
+          analogous: [
+            { h: (hsl.h - 30 + 360) % 360, s: hsl.s, l: hsl.l },
+            { h: hsl.h, s: hsl.s, l: hsl.l },
+            { h: (hsl.h + 30) % 360, s: hsl.s, l: hsl.l },
+          ],
+          triadic: [
+            { h: hsl.h, s: hsl.s, l: hsl.l },
+            { h: (hsl.h + 120) % 360, s: hsl.s, l: hsl.l },
+            { h: (hsl.h + 240) % 360, s: hsl.s, l: hsl.l },
+          ],
+          tetradic: [
+            { h: hsl.h, s: hsl.s, l: hsl.l },
+            { h: (hsl.h + 90) % 360, s: hsl.s, l: hsl.l },
+            { h: (hsl.h + 180) % 360, s: hsl.s, l: hsl.l },
+            { h: (hsl.h + 270) % 360, s: hsl.s, l: hsl.l },
+          ],
+          monochromatic: [
+            { h: hsl.h, s: hsl.s, l: Math.max(0, hsl.l - 30) },
+            { h: hsl.h, s: hsl.s, l: Math.max(0, hsl.l - 15) },
+            { h: hsl.h, s: hsl.s, l: hsl.l },
+            { h: hsl.h, s: hsl.s, l: Math.min(100, hsl.l + 15) },
+            { h: hsl.h, s: hsl.s, l: Math.min(100, hsl.l + 30) },
+          ],
+        };
+
+        const result = {};
+        for (const [name, colors] of Object.entries(harmonies)) {
+          result[name] = colors.map(hsl => {
+            const rgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+            return formatColorData(rgb);
+          });
+        }
+
+        return result;
+      }
+
+      function sortPaletteByHue(palette) {
+        return [...palette].sort((a, b) => {
+          return a.hslObj.h - b.hslObj.h;
+        });
+      }
+
+      function shuffleArray(array) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+      }
+
+      function generateCssVariables(colors) {
+        const { vibrantColor, dominantColor, palette } = colors;
+        let css = `:root {\n`;
+        css += `  --primary-color: ${vibrantColor.hex};\n`;
+        css += `  --primary-rgb: ${vibrantColor.rgbArray.join(', ')};\n`;
+        css += `  --secondary-color: ${dominantColor.hex};\n`;
+        css += `  --secondary-rgb: ${dominantColor.rgbArray.join(', ')};\n\n`;
+
+        palette.forEach((color, index) => {
+          css += `  --palette-${index + 1}: ${color.hex};\n`;
+        });
+
+        css += `\n  --text-on-primary: ${vibrantColor.textColor};\n`;
+        css += `  --text-on-secondary: ${dominantColor.textColor};\n`;
+
+        css += `}`;
+        return css;
+      }
+
+      function generateSassVariables(colors) {
+        const { vibrantColor, dominantColor, palette } = colors;
+        let sass = `$primary-color: ${vibrantColor.hex};\n`;
+        sass += `$primary-rgb: ${vibrantColor.rgbArray.join(', ')};\n`;
+        sass += `$secondary-color: ${dominantColor.hex};\n`;
+        sass += `$secondary-rgb: ${dominantColor.rgbArray.join(', ')};\n\n`;
+
+        palette.forEach((color, index) => {
+          sass += `$palette-${index + 1}: ${color.hex};\n`;
+        });
+
+        sass += `\n$text-on-primary: ${vibrantColor.textColor};\n`;
+        sass += `$text-on-secondary: ${dominantColor.textColor};\n`;
+
+        return sass;
+      }
+
+      function extractChannelId(input) {
+        if (input.includes('youtube.com') || input.includes('youtu.be')) {
+          const channelMatch = input.match(
+            /youtube\.com\/(channel|c|user|@)\/([^\/\?]+)/
+          );
+          if (channelMatch) {
+            return channelMatch[2];
+          }
+
+          const videoMatch = input.match(/[?&]v=([^&]+)/);
+          if (videoMatch) {
+            return videoMatch[1];
+          }
+        }
+
+        if (input.startsWith('@')) {
+          return input;
+        }
+
+        return input;
+      }
+
+      function showToast(message, duration = 3000) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, duration);
+      }
+
+      function saveToHistory(channelData, colorResults) {
+        const history =
+          JSON.parse(localStorage.getItem('channelHistory')) || [];
+
+        const existingIndex = history.findIndex(
+          item => item.channelId === channelData.channelDetails.id
+        );
+
+        const historyItem = {
+          channelId: channelData.channelDetails.id,
+          name: channelData.channelDetails.name,
+          handle: channelData.channelDetails.handle,
+          profilePicture: channelData.channelDetails.profilePicture,
+          timestamp: new Date().toISOString(),
+          colors: [
+            colorResults.vibrantColor.hex,
+            colorResults.dominantColor.hex,
+            ...colorResults.palette.slice(0, 3).map(color => color.hex),
+          ],
+        };
+
+        if (existingIndex !== -1) {
+          history.splice(existingIndex, 1);
+        }
+
+        history.unshift(historyItem);
+
+        const trimmedHistory = history.slice(0, 10);
+
+        localStorage.setItem('channelHistory', JSON.stringify(trimmedHistory));
+
+        updateHistoryUI();
+      }
+
+      function updateHistoryUI() {
+        const historyContainer = document.getElementById('historyContainer');
+        const historyItems = document.getElementById('historyItems');
+        const history =
+          JSON.parse(localStorage.getItem('channelHistory')) || [];
+
+        if (history.length === 0) {
+          historyContainer.style.display = 'none';
+          return;
+        }
+
+        historyContainer.style.display = 'block';
+        historyItems.innerHTML = '';
+
+        history.forEach(item => {
+          const timeAgo = getTimeAgo(new Date(item.timestamp));
+
+          const historyItem = document.createElement('div');
+          historyItem.className = 'history-item';
+          historyItem.dataset.channelId = item.channelId;
+
+          historyItem.innerHTML = `
+            <div class="history-thumbnail">
+              <img src="${item.profilePicture}" alt="${item.name}">
+            </div>
+            <div class="history-info">
+              <div class="history-channel-name">${item.name}</div>
+              <div class="history-timestamp">${timeAgo}</div>
+            </div>
+            <div class="history-colors">
+              ${item.colors
+                .map(
+                  color =>
+                    `<div class="history-color" style="background-color: ${color}"></div>`
+                )
+                .join('')}
+            </div>
+          `;
+
+          historyItems.appendChild(historyItem);
+        });
+      }
+
+      function getTimeAgo(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+
+        let interval = Math.floor(seconds / 31536000);
+        if (interval > 1) return interval + ' years ago';
+        if (interval === 1) return '1 year ago';
+
+        interval = Math.floor(seconds / 2592000);
+        if (interval > 1) return interval + ' months ago';
+        if (interval === 1) return '1 month ago';
+
+        interval = Math.floor(seconds / 86400);
+        if (interval > 1) return interval + ' days ago';
+        if (interval === 1) return '1 day ago';
+
+        interval = Math.floor(seconds / 3600);
+        if (interval > 1) return interval + ' hours ago';
+        if (interval === 1) return '1 hour ago';
+
+        interval = Math.floor(seconds / 60);
+        if (interval > 1) return interval + ' minutes ago';
+        if (interval === 1) return '1 minute ago';
+
+        return 'just now';
+      }
+
+      function clearHistory() {
+        localStorage.removeItem('channelHistory');
+        updateHistoryUI();
+        showToast('History cleared');
+      }
+
+      async function analyzePalette(imageUrl) {
+        return new Promise((resolve, reject) => {
           const img = new Image();
           img.crossOrigin = 'Anonymous';
+          img.onload = function () {
+            try {
+              const colorThief = new ColorThief();
+              const dominantColor = colorThief.getColor(img);
+              const palette = colorThief.getPalette(img, 8);
 
-          await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = reject;
-            img.src = imageUrl;
-          });
+              const vibrantColor = getMostVibrantColor(palette);
 
-          const palette = colorThief.getPalette(img, 8);
+              const dominantColorData = formatColorData(dominantColor);
+              const vibrantColorData = formatColorData(vibrantColor);
+              const paletteData = palette.map(color => formatColorData(color));
 
-          const mostVibrantColor = getMostVibrantColor(palette);
-          const vibrancyScore = getVibrancy(mostVibrantColor);
-          const hex = rgbToHex(
-            mostVibrantColor[0],
-            mostVibrantColor[1],
-            mostVibrantColor[2]
-          );
-          const hsl = rgbToHsl(
-            mostVibrantColor[0],
-            mostVibrantColor[1],
-            mostVibrantColor[2]
-          );
+              const harmonies = generateColorHarmonies(vibrantColorData);
 
-          return {
-            vibrantColor: {
-              rgbArray: mostVibrantColor,
-              hex: hex,
-              rgb: `rgb(${mostVibrantColor[0]}, ${mostVibrantColor[1]}, ${mostVibrantColor[2]})`,
-              hsl: `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`,
-              vibrancy: vibrancyScore.toFixed(2),
-            },
-            palette: palette,
+              resolve({
+                dominantColor: dominantColorData,
+                vibrantColor: vibrantColorData,
+                palette: paletteData,
+                harmonies: harmonies,
+              });
+            } catch (error) {
+              reject(error);
+            }
           };
-        } catch (error) {
-          console.error('Error analyzing image:', error);
-          throw error;
-        }
+
+          img.onerror = function () {
+            reject(new Error('Failed to load image'));
+          };
+
+          img.src = imageUrl;
+        });
       }
 
       async function fetchChannelData(channelId) {
@@ -630,34 +2340,30 @@
             `https://api.communitrics.com/${channelId}`
           );
           if (!response.ok) {
-            throw new Error(`API responded with status: ${response.status}`);
+            throw new Error('Channel not found or API error');
           }
           return await response.json();
         } catch (error) {
-          console.error('Error fetching channel data:', error);
           throw error;
         }
       }
 
       function formatNumber(num) {
         if (num >= 1000000000) {
-          return (num / 1000000000).toFixed(0) + 'B';
+          return (num / 1000000000).toFixed(1) + 'B';
         }
         if (num >= 1000000) {
-          return (num / 1000000).toFixed(0) + 'M';
+          return (num / 1000000).toFixed(1) + 'M';
         }
         if (num >= 1000) {
-          return (num / 1000).toFixed(0) + 'K';
+          return (num / 1000).toFixed(1) + 'K';
         }
         return num.toString();
       }
 
       function updateUI(channelData, colorResults) {
         const channelDetails = channelData.channelDetails;
-        const vibrantColor = colorResults.vibrantColor;
 
-        document.getElementById('profileImg').src =
-          channelDetails.profilePicture;
         document.getElementById('channelName').textContent =
           channelDetails.name;
         document.getElementById('channelHandle').textContent =
@@ -665,110 +2371,540 @@
         document.getElementById('subscriberCount').textContent = formatNumber(
           channelDetails.subscriberCount
         );
-
-        const colorPreview = document.getElementById('colorPreview');
-        colorPreview.style.backgroundColor = vibrantColor.hex;
-
-        document.getElementById('hexValue').textContent = vibrantColor.hex;
-        document.getElementById('rgbValue').textContent = vibrantColor.rgb;
-        document.getElementById('hslValue').textContent = vibrantColor.hsl;
-
-        document.documentElement.style.setProperty(
-          '--accent-color',
-          vibrantColor.hex
+        document.getElementById('videoCountValue').textContent = formatNumber(
+          channelDetails.videoCount
+        );
+        document.getElementById('viewCountValue').textContent = formatNumber(
+          channelDetails.viewCount
         );
 
-        const rgb = vibrantColor.rgbArray;
-        document.documentElement.style.setProperty(
-          '--accent-rgb',
-          `${rgb[0]}, ${rgb[1]}, ${rgb[2]}`
-        );
-
-        const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
-        const textColor = brightness > 125 ? '#333333' : '#ffffff';
-        document.documentElement.style.setProperty('--text-color', textColor);
+        document.getElementById('profileImg').src =
+          channelDetails.profilePicture;
 
         document.getElementById('channelBanner').style.backgroundColor =
-          vibrantColor.hex;
+          colorResults.vibrantColor.hex;
 
-        document.getElementById('loading').style.display = 'none';
+        document.getElementById('vibrantColorPreview').style.backgroundColor =
+          colorResults.vibrantColor.hex;
+        document.getElementById('dominantColorPreview').style.backgroundColor =
+          colorResults.dominantColor.hex;
+
+        document.getElementById('vibrantHexValue').textContent =
+          colorResults.vibrantColor.hex;
+        document.getElementById('vibrantRgbValue').textContent =
+          colorResults.vibrantColor.rgb;
+        document.getElementById('vibrantHslValue').textContent =
+          colorResults.vibrantColor.hsl;
+
+        document.getElementById('dominantHexValue').textContent =
+          colorResults.dominantColor.hex;
+        document.getElementById('dominantRgbValue').textContent =
+          colorResults.dominantColor.rgb;
+        document.getElementById('dominantHslValue').textContent =
+          colorResults.dominantColor.hsl;
+
+        updatePaletteGrid(colorResults.palette);
+        updateHarmonies(colorResults.harmonies);
         document.getElementById('resultsContainer').classList.add('visible');
       }
 
-      function showError(message) {
-        const errorEl = document.getElementById('errorMessage');
-        errorEl.textContent = message;
-        errorEl.style.display = 'block';
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('resultsContainer').classList.remove('visible');
+      function updatePaletteGrid(palette) {
+        const paletteGrid = document.getElementById('paletteGrid');
+        paletteGrid.innerHTML = '';
+
+        palette.forEach((color, index) => {
+          const colorElement = document.createElement('div');
+          colorElement.className = 'palette-color';
+          colorElement.style.backgroundColor = color.hex;
+
+          colorElement.innerHTML = `
+      <div class="palette-color-content" style="color: ${color.textColor}">
+        <div class="palette-color-hex">${color.hex}</div>
+        <div class="palette-color-index">#${index + 1}</div>
+      </div>
+      <div class="palette-color-copy">
+        <i class="fas fa-copy"></i>
+        <div class="palette-color-copy-text">Copy HEX</div>
+      </div>
+    `;
+
+          colorElement.addEventListener('click', () => {
+            navigator.clipboard.writeText(color.hex);
+            showToast(`Copied ${color.hex} to clipboard`);
+          });
+
+          paletteGrid.appendChild(colorElement);
+        });
+      }
+
+      function updateHarmonies(harmonies) {
+        const harmonySchemes = document.getElementById('harmonySchemes');
+        harmonySchemes.innerHTML = '';
+
+        const harmonyNames = {
+          complementary: 'Complementary',
+          analogous: 'Analogous',
+          triadic: 'Triadic',
+          tetradic: 'Tetradic',
+          monochromatic: 'Monochromatic',
+        };
+
+        const harmonyIcons = {
+          complementary: 'fa-yin-yang',
+          analogous: 'fa-sliders',
+          triadic: 'fa-triangle',
+          tetradic: 'fa-square',
+          monochromatic: 'fa-swatchbook',
+        };
+
+        for (const [key, colors] of Object.entries(harmonies)) {
+          const schemeElement = document.createElement('div');
+          schemeElement.className = 'harmony-scheme';
+
+          const schemeTitle = document.createElement('h4');
+          schemeTitle.className = 'scheme-title';
+          schemeTitle.innerHTML = `<i class="fas ${harmonyIcons[key]}"></i> ${harmonyNames[key]}`;
+
+          const schemeColors = document.createElement('div');
+          schemeColors.className = 'scheme-colors';
+
+          colors.forEach(color => {
+            const colorElement = document.createElement('div');
+            colorElement.className = 'scheme-color';
+            colorElement.style.backgroundColor = color.hex;
+
+            const copyElement = document.createElement('div');
+            copyElement.className = 'scheme-color-copy';
+            copyElement.innerHTML = '<i class="fas fa-copy"></i>';
+
+            colorElement.appendChild(copyElement);
+
+            colorElement.addEventListener('click', () => {
+              navigator.clipboard.writeText(color.hex);
+              showToast(`Copied ${color.hex} to clipboard`);
+            });
+
+            schemeColors.appendChild(colorElement);
+          });
+
+          schemeElement.appendChild(schemeTitle);
+          schemeElement.appendChild(schemeColors);
+          harmonySchemes.appendChild(schemeElement);
+        }
       }
 
       async function analyzeChannel(channelId) {
         try {
-          document.getElementById('errorMessage').style.display = 'none';
-
           document.getElementById('loading').style.display = 'flex';
+          document.getElementById('errorMessage').style.display = 'none';
           document
             .getElementById('resultsContainer')
             .classList.remove('visible');
 
-          const channelData = await fetchChannelData(channelId);
-
-          const profilePictureUrl = channelData.channelDetails.profilePicture;
-
-          const colorResults = await analyzePalette(profilePictureUrl);
+          const extractedId = extractChannelId(channelId);
+          const channelData = await fetchChannelData(extractedId);
+          const colorResults = await analyzePalette(
+            channelData.channelDetails.profilePicture
+          );
 
           updateUI(channelData, colorResults);
+          saveToHistory(channelData, colorResults);
+
+          return { channelData, colorResults };
         } catch (error) {
-          showError(
-            `Error: ${
-              error.message ||
-              'Failed to analyze the channel. Please check the channel ID and try again.'
-            }`
-          );
+          document.getElementById('errorMessage').textContent = error.message;
+          document.getElementById('errorMessage').style.display = 'block';
+          console.error(error);
+        } finally {
+          document.getElementById('loading').style.display = 'none';
         }
       }
+      document.addEventListener('DOMContentLoaded', function () {
+        const themeToggle = document.getElementById('themeToggle');
 
-      document.addEventListener('DOMContentLoaded', () => {
+        themeToggle.addEventListener('click', function () {
+          document.body.classList.toggle('dark-mode');
+          const isDarkMode = document.body.classList.contains('dark-mode');
+          themeToggle.innerHTML = isDarkMode
+            ? '<i class="fas fa-sun"></i>'
+            : '<i class="fas fa-moon"></i>';
+          localStorage.setItem('darkMode', isDarkMode);
+
+          if (document.getElementById('cssModal').classList.contains('show')) {
+            applyModalDarkMode();
+          }
+        });
+
+        if (localStorage.getItem('darkMode') === 'true') {
+          document.body.classList.add('dark-mode');
+          themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
         const analyzeBtn = document.getElementById('analyzeBtn');
-        const channelIdInput = document.getElementById('channelIdInput');
-        const exampleChips = document.querySelectorAll('.example-chip');
-
-        analyzeBtn.addEventListener('click', () => {
-          const channelId = channelIdInput.value.trim();
+        analyzeBtn.addEventListener('click', function () {
+          const channelId = document
+            .getElementById('channelIdInput')
+            .value.trim();
           if (channelId) {
             analyzeChannel(channelId);
           } else {
-            showError('Please enter a YouTube channel ID');
+            document.getElementById('errorMessage').textContent =
+              'Please enter a YouTube channel ID, handle, or URL';
+            document.getElementById('errorMessage').style.display = 'block';
           }
         });
 
-        channelIdInput.addEventListener('keypress', e => {
-          if (e.key === 'Enter') {
-            analyzeBtn.click();
-          }
-        });
-
+        const exampleChips = document.querySelectorAll('.example-chip');
         exampleChips.forEach(chip => {
-          chip.addEventListener('click', () => {
-            const channelId = chip.dataset.id;
-            channelIdInput.value = channelId;
-            analyzeBtn.click();
+          chip.addEventListener('click', function () {
+            const channelId = this.dataset.id;
+            document.getElementById('channelIdInput').value = channelId;
+            analyzeChannel(channelId);
           });
         });
+
+        const channelIdInput = document.getElementById('channelIdInput');
+        channelIdInput.addEventListener('keypress', function (e) {
+          if (e.key === 'Enter') {
+            const channelId = this.value.trim();
+            if (channelId) {
+              analyzeChannel(channelId);
+            }
+          }
+        });
+
+        document
+          .getElementById('shufflePaletteBtn')
+          .addEventListener('click', function () {
+            const paletteGrid = document.getElementById('paletteGrid');
+            const paletteColors = Array.from(paletteGrid.children);
+            const shuffled = shuffleArray(paletteColors);
+
+            paletteGrid.innerHTML = '';
+            shuffled.forEach(color => paletteGrid.appendChild(color));
+          });
+
+        document
+          .getElementById('sortPaletteBtn')
+          .addEventListener('click', function () {
+            const paletteGrid = document.getElementById('paletteGrid');
+            const paletteColors = Array.from(paletteGrid.children);
+
+            const colors = paletteColors.map(el => {
+              const bgColor = el.style.backgroundColor;
+              const rgb = bgColor.match(/\d+/g).map(Number);
+              return { element: el, color: formatColorData(rgb) };
+            });
+
+            const sorted = colors.sort(
+              (a, b) => a.color.hslObj.h - b.color.hslObj.h
+            );
+
+            paletteGrid.innerHTML = '';
+            sorted.forEach(item => paletteGrid.appendChild(item.element));
+          });
 
         document.querySelectorAll('.copy-button').forEach(button => {
-          button.addEventListener('click', () => {
-            const valueType = button.dataset.value;
-            const valueElement = document.getElementById(`${valueType}Value`);
-            navigator.clipboard.writeText(valueElement.textContent);
+          button.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const valueId = this.dataset.value;
+            const value = document.getElementById(
+              `${valueId}Value`
+            ).textContent;
+            navigator.clipboard.writeText(value);
 
-            const originalText = button.textContent;
-            button.textContent = 'Copied!';
-            setTimeout(() => (button.textContent = originalText), 1000);
+            if (!this.dataset.originalText) {
+              this.dataset.originalText = this.textContent.trim();
+            }
+
+            this.textContent = 'Copied!';
+
+            clearTimeout(this.resetTimeout);
+            this.resetTimeout = setTimeout(() => {
+              this.textContent = this.dataset.originalText;
+            }, 1500);
           });
         });
+
+        document
+          .getElementById('exportCssBtn')
+          .addEventListener('click', function () {
+            const cssModal = document.getElementById('cssModal');
+            const cssCode = document.getElementById('cssCode');
+            const modalTitle = document.querySelector('.modal-title');
+            modalTitle.textContent = 'CSS Variables';
+            applyModalDarkMode();
+
+            const vibrantRgb = document
+              .getElementById('vibrantRgbValue')
+              .textContent.match(/\d+/g)
+              .map(Number);
+            const dominantRgb = document
+              .getElementById('dominantRgbValue')
+              .textContent.match(/\d+/g)
+              .map(Number);
+
+            const paletteColors = Array.from(
+              document.querySelectorAll('.palette-color')
+            ).map(el => {
+              const bgColor = el.style.backgroundColor;
+              const rgb = bgColor.match(/\d+/g).map(Number);
+              return formatColorData(rgb);
+            });
+
+            const colors = {
+              vibrantColor: formatColorData(vibrantRgb),
+              dominantColor: formatColorData(dominantRgb),
+              palette: paletteColors,
+            };
+
+            cssCode.textContent = generateCssVariables(colors);
+            cssModal.classList.add('show');
+          });
+
+        document
+          .getElementById('exportSassBtn')
+          .addEventListener('click', function () {
+            const cssModal = document.getElementById('cssModal');
+            const cssCode = document.getElementById('cssCode');
+            const modalTitle = document.querySelector('.modal-title');
+            modalTitle.textContent = 'SASS Variables';
+            applyModalDarkMode();
+
+            const vibrantRgb = document
+              .getElementById('vibrantRgbValue')
+              .textContent.match(/\d+/g)
+              .map(Number);
+            const dominantRgb = document
+              .getElementById('dominantRgbValue')
+              .textContent.match(/\d+/g)
+              .map(Number);
+
+            const paletteColors = Array.from(
+              document.querySelectorAll('.palette-color')
+            ).map(el => {
+              const bgColor = el.style.backgroundColor;
+              const rgb = bgColor.match(/\d+/g).map(Number);
+              return formatColorData(rgb);
+            });
+
+            const colors = {
+              vibrantColor: formatColorData(vibrantRgb),
+              dominantColor: formatColorData(dominantRgb),
+              palette: paletteColors,
+            };
+
+            cssCode.textContent = generateSassVariables(colors);
+            cssModal.classList.add('show');
+          });
+
+        document
+          .getElementById('exportPngBtn')
+          .addEventListener('click', function () {
+            const paletteColors = Array.from(
+              document.querySelectorAll('.palette-color')
+            ).map(el => {
+              return el.style.backgroundColor;
+            });
+
+            const profileImgSrc = document.getElementById('profileImg').src;
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+
+            img.onload = function () {
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              const width = 800;
+              const height = 400;
+              canvas.width = width;
+              canvas.height = height;
+
+              ctx.fillStyle = document.body.classList.contains('dark-mode')
+                ? '#1e1e1e'
+                : '#ffffff';
+              ctx.fillRect(0, 0, width, height);
+
+              const channelName =
+                document.getElementById('channelName').textContent;
+
+              const imgSize = 100;
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(
+                imgSize / 2 + 50,
+                height / 2,
+                imgSize / 2,
+                0,
+                Math.PI * 2
+              );
+              ctx.closePath();
+              ctx.clip();
+              ctx.drawImage(
+                img,
+                50,
+                height / 2 - imgSize / 2,
+                imgSize,
+                imgSize
+              );
+              ctx.restore();
+
+              document.fonts.load('bold 24px "Inter"').then(() => {
+                ctx.font = 'bold 24px "Inter", sans-serif';
+                ctx.fillStyle = document.body.classList.contains('dark-mode')
+                  ? '#f0f0f0'
+                  : '#333333';
+                ctx.fillText(channelName, imgSize + 80, height / 2 + 10);
+
+                const colorWidth = (width - 300) / paletteColors.length;
+                paletteColors.forEach((color, index) => {
+                  ctx.fillStyle = color;
+                  ctx.fillRect(
+                    300 + index * colorWidth,
+                    height / 2 - 50,
+                    colorWidth,
+                    100
+                  );
+                });
+
+                try {
+                  const dataUrl = canvas.toDataURL('image/png');
+                  const link = document.createElement('a');
+                  link.download = `${channelName
+                    .replace(/\s+/g, '-')
+                    .toLowerCase()}-palette.png`;
+                  link.href = dataUrl;
+                  link.click();
+                } catch (e) {
+                  console.error('Error exporting image:', e);
+                  showToast("Couldn't export image due to CORS restrictions.");
+                  exportWithColoredCircle();
+                }
+              });
+            };
+
+            img.onerror = function () {
+              console.error('Error loading image with CORS settings');
+              showToast("Couldn't load image with CORS settings.");
+              exportWithColoredCircle();
+            };
+
+            img.src = profileImgSrc;
+          });
+
+        const cssModal = document.getElementById('cssModal');
+        cssModal.addEventListener('click', function (event) {
+          if (event.target === cssModal) {
+            cssModal.classList.remove('show');
+          }
+        });
+
+        document
+          .getElementById('closeCssModal')
+          .addEventListener('click', function () {
+            document.getElementById('cssModal').classList.remove('show');
+          });
+
+        document
+          .getElementById('copyCssBtn')
+          .addEventListener('click', function () {
+            const cssCode = document.getElementById('cssCode').textContent;
+            navigator.clipboard.writeText(cssCode);
+            showToast('Copied to clipboard');
+          });
+
+        document
+          .getElementById('clearHistoryBtn')
+          .addEventListener('click', clearHistory);
+
+        document
+          .getElementById('historyItems')
+          .addEventListener('click', function (e) {
+            const historyItem = e.target.closest('.history-item');
+            if (historyItem) {
+              const channelId = historyItem.dataset.channelId;
+              document.getElementById('channelIdInput').value = channelId;
+              analyzeChannel(channelId);
+            }
+          });
+
+        updateHistoryUI();
+        analyzeChannel('UCX6OQ3DkcsbYNE6H8uQQuVA');
       });
+
+      function applyModalDarkMode() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const modalContent = document.querySelector('.modal-content');
+        const cssCode = document.getElementById('cssCode');
+
+        if (isDarkMode) {
+          modalContent.style.backgroundColor = 'var(--dark-mode-card)';
+          modalContent.style.color = 'var(--dark-mode-text)';
+          cssCode.style.backgroundColor = 'var(--dark-mode-input)';
+          cssCode.style.color = 'var(--dark-mode-text)';
+        } else {
+          modalContent.style.backgroundColor = 'var(--card-bg)';
+          modalContent.style.color = '#333';
+          cssCode.style.backgroundColor = '#f5f5f5';
+          cssCode.style.color = '#333';
+        }
+      }
+
+      function exportWithColoredCircle() {
+        const paletteColors = Array.from(
+          document.querySelectorAll('.palette-color')
+        ).map(el => {
+          return el.style.backgroundColor;
+        });
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const width = 800;
+        const height = 400;
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.fillStyle = document.body.classList.contains('dark-mode')
+          ? '#1e1e1e'
+          : '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+
+        const channelName = document.getElementById('channelName').textContent;
+
+        const vibrantColor =
+          document.getElementById('vibrantHexValue').textContent;
+        const imgSize = 100;
+        ctx.fillStyle = vibrantColor;
+        ctx.beginPath();
+        ctx.arc(imgSize / 2 + 50, height / 2, imgSize / 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        document.fonts.load('bold 24px "Inter"').then(() => {
+          ctx.font = 'bold 24px "Inter", sans-serif';
+          ctx.fillStyle = document.body.classList.contains('dark-mode')
+            ? '#f0f0f0'
+            : '#333333';
+          ctx.fillText(channelName, imgSize + 80, height / 2 - 10);
+
+          const colorWidth = (width - 300) / paletteColors.length;
+          paletteColors.forEach((color, index) => {
+            ctx.fillStyle = color;
+            ctx.fillRect(
+              300 + index * colorWidth,
+              height / 2 - 50,
+              colorWidth,
+              100
+            );
+          });
+
+          const dataUrl = canvas.toDataURL('image/png');
+          const link = document.createElement('a');
+          link.download = `${channelName
+            .replace(/\s+/g, '-')
+            .toLowerCase()}-palette.png`;
+          link.href = dataUrl;
+          link.click();
+        });
+      }
     </script>
   </body>
 </html>
