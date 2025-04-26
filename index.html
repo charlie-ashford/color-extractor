@@ -89,7 +89,6 @@
       }
 
       body.dark-mode .subtitle,
-      body.dark-mode .channel-handle,
       body.dark-mode .palette-description,
       body.dark-mode .harmony-description {
         color: var(--dark-mode-secondary);
@@ -416,12 +415,6 @@
         font-size: 2rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
-      }
-
-      .channel-handle {
-        font-size: 1.1rem;
-        color: #666;
-        margin-bottom: 1rem;
       }
 
       .channel-stats {
@@ -1159,7 +1152,6 @@
         }
 
         .subtitle,
-        .channel-handle,
         .palette-description,
         .harmony-description {
           color: var(--dark-mode-secondary);
@@ -1324,11 +1316,6 @@
           margin-top: 0.5rem;
           margin-bottom: 0.25rem;
           color: var(--dark-mode-text);
-        }
-
-        .channel-handle {
-          font-size: 0.9rem;
-          margin-bottom: 0.75rem;
         }
 
         .channel-stats {
@@ -1758,7 +1745,6 @@
           </div>
           <div class="channel-info" id="channelInfo">
             <h2 class="channel-name" id="channelName">Channel Name</h2>
-            <p class="channel-handle" id="channelHandle">@handle</p>
             <div class="channel-stats">
               <div class="stat-badge" id="subscribers">
                 <i class="fas fa-users"></i>
@@ -2199,7 +2185,6 @@
         const historyItem = {
           channelId: channelData.channelDetails.id,
           name: channelData.channelDetails.name,
-          handle: channelData.channelDetails.handle,
           profilePicture: channelData.channelDetails.profilePicture,
           timestamp: new Date().toISOString(),
           colors: [
@@ -2337,12 +2322,24 @@
       async function fetchChannelData(channelId) {
         try {
           const response = await fetch(
-            `https://api.communitrics.com/${channelId}`
+            `https://ests.sctools.org/api/get/${channelId}`
           );
           if (!response.ok) {
             throw new Error('Channel not found or API error');
           }
-          return await response.json();
+
+          const data = await response.json();
+
+          return {
+            channelDetails: {
+              id: data.info.id,
+              name: data.info.name,
+              profilePicture: data.info.avatar,
+              subscriberCount: data.stats.apiCount,
+              videoCount: data.stats.videoCount,
+              viewCount: data.stats.viewCount,
+            },
+          };
         } catch (error) {
           throw error;
         }
@@ -2370,8 +2367,6 @@
 
         document.getElementById('channelName').textContent =
           channelDetails.name;
-        document.getElementById('channelHandle').textContent =
-          channelDetails.handle;
         document.getElementById('subscriberCount').textContent = formatNumber(
           channelDetails.subscriberCount
         );
