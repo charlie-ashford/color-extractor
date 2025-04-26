@@ -2498,6 +2498,17 @@
         return id.startsWith('UC');
       }
 
+      function updateUrlWithChannelId(channelId) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', channelId);
+        window.history.pushState({ channelId }, '', url);
+      }
+
+      function getChannelIdFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+      }
+
       async function analyzeChannel(channelIdOrName) {
         try {
           document.getElementById('loading').style.display = 'flex';
@@ -2523,6 +2534,7 @@
 
           updateUI(channelData, colorResults);
           saveToHistory(channelData, colorResults);
+          updateUrlWithChannelId(channelData.channelDetails.id);
 
           return { channelData, colorResults };
         } catch (error) {
@@ -2554,6 +2566,22 @@
           document.body.classList.add('dark-mode');
           themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
+
+        const urlChannelId = getChannelIdFromUrl();
+        if (urlChannelId) {
+          document.getElementById('channelIdInput').value = urlChannelId;
+          analyzeChannel(urlChannelId);
+        } else {
+          analyzeChannel('UCX6OQ3DkcsbYNE6H8uQQuVA');
+        }
+
+        window.addEventListener('popstate', function (event) {
+          if (event.state && event.state.channelId) {
+            document.getElementById('channelIdInput').value =
+              event.state.channelId;
+            analyzeChannel(event.state.channelId);
+          }
+        });
 
         const analyzeBtn = document.getElementById('analyzeBtn');
         analyzeBtn.addEventListener('click', function () {
