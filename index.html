@@ -1885,10 +1885,6 @@
               <i class="fab fa-css3-alt"></i>
               CSS Variables
             </button>
-            <button class="export-btn" id="exportSassBtn">
-              <i class="fab fa-sass"></i>
-              SASS Variables
-            </button>
             <button class="export-btn" id="exportPngBtn">
               <i class="fas fa-image"></i>
               PNG Image
@@ -2123,23 +2119,6 @@
 
         css += `}`;
         return css;
-      }
-
-      function generateSassVariables(colors) {
-        const { vibrantColor, dominantColor, palette } = colors;
-        let sass = `$primary-color: ${vibrantColor.hex};\n`;
-        sass += `$primary-rgb: ${vibrantColor.rgbArray.join(', ')};\n`;
-        sass += `$secondary-color: ${dominantColor.hex};\n`;
-        sass += `$secondary-rgb: ${dominantColor.rgbArray.join(', ')};\n\n`;
-
-        palette.forEach((color, index) => {
-          sass += `$palette-${index + 1}: ${color.hex};\n`;
-        });
-
-        sass += `\n$text-on-primary: ${vibrantColor.textColor};\n`;
-        sass += `$text-on-secondary: ${dominantColor.textColor};\n`;
-
-        return sass;
       }
 
       function extractChannelId(input) {
@@ -2695,42 +2674,6 @@
             };
 
             cssCode.textContent = generateCssVariables(colors);
-            cssModal.classList.add('show');
-          });
-
-        document
-          .getElementById('exportSassBtn')
-          .addEventListener('click', function () {
-            const cssModal = document.getElementById('cssModal');
-            const cssCode = document.getElementById('cssCode');
-            const modalTitle = document.querySelector('.modal-title');
-            modalTitle.textContent = 'SASS Variables';
-            applyModalDarkMode();
-
-            const vibrantRgb = document
-              .getElementById('vibrantRgbValue')
-              .textContent.match(/\d+/g)
-              .map(Number);
-            const dominantRgb = document
-              .getElementById('dominantRgbValue')
-              .textContent.match(/\d+/g)
-              .map(Number);
-
-            const paletteColors = Array.from(
-              document.querySelectorAll('.palette-color')
-            ).map(el => {
-              const bgColor = el.style.backgroundColor;
-              const rgb = bgColor.match(/\d+/g).map(Number);
-              return formatColorData(rgb);
-            });
-
-            const colors = {
-              vibrantColor: formatColorData(vibrantRgb),
-              dominantColor: formatColorData(dominantRgb),
-              palette: paletteColors,
-            };
-
-            cssCode.textContent = generateSassVariables(colors);
             cssModal.classList.add('show');
           });
 
