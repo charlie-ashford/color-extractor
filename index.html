@@ -1714,7 +1714,7 @@
           <input
             type="text"
             id="channelIdInput"
-            placeholder="Enter YouTube Channel ID, handle (@username), or URL"
+            placeholder="Enter YouTube Channel ID"
             autocomplete="off"
           />
           <button id="analyzeBtn">Analyze</button>
@@ -2553,7 +2553,7 @@
             analyzeChannel(channelId);
           } else {
             document.getElementById('errorMessage').textContent =
-              'Please enter a YouTube channel ID, handle, or URL';
+              'Please enter a YouTube channel ID';
             document.getElementById('errorMessage').style.display = 'block';
           }
         });
