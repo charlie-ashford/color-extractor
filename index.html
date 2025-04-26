@@ -2567,6 +2567,9 @@
           themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
 
+        setupEventListeners();
+        updateHistoryUI();
+
         const urlChannelId = getChannelIdFromUrl();
         if (urlChannelId) {
           document.getElementById('channelIdInput').value = urlChannelId;
@@ -2574,7 +2577,9 @@
         } else {
           analyzeChannel('UCX6OQ3DkcsbYNE6H8uQQuVA');
         }
+      });
 
+      function setupEventListeners() {
         window.addEventListener('popstate', function (event) {
           if (event.state && event.state.channelId) {
             document.getElementById('channelIdInput').value =
@@ -2833,10 +2838,7 @@
               analyzeChannel(channelId);
             }
           });
-
-        updateHistoryUI();
-        analyzeChannel('UCX6OQ3DkcsbYNE6H8uQQuVA');
-      });
+      }
 
       function applyModalDarkMode() {
         const isDarkMode = document.body.classList.contains('dark-mode');
