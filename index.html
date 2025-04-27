@@ -227,6 +227,7 @@
         color: #1a1a1a;
         background: linear-gradient(90deg, #ff5733, #ff2d75);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
         display: inline-block;
       }
@@ -1233,6 +1234,7 @@
           margin-bottom: 0.5rem;
           background: linear-gradient(90deg, #ff5733, #ff2d75);
           -webkit-background-clip: text;
+          background-clip: text;
           -webkit-text-fill-color: transparent;
         }
 
@@ -1938,6 +1940,10 @@
     </div>
 
     <script>
+      let originalPalette = [];
+      let currentPalette = [];
+      let paletteState = 'default';
+
       function rgbToHex(r, g, b) {
         return (
           '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)
@@ -2221,22 +2227,22 @@
           historyItem.dataset.channelId = item.channelId;
 
           historyItem.innerHTML = `
-            <div class="history-thumbnail">
-              <img src="${item.profilePicture}" alt="${item.name}">
-            </div>
-            <div class="history-info">
-              <div class="history-channel-name">${item.name}</div>
-              <div class="history-timestamp">${timeAgo}</div>
-            </div>
-            <div class="history-colors">
-              ${item.colors
-                .map(
-                  color =>
-                    `<div class="history-color" style="background-color: ${color}"></div>`
-                )
-                .join('')}
-            </div>
-          `;
+        <div class="history-thumbnail">
+          <img src="${item.profilePicture}" alt="${item.name}">
+        </div>
+        <div class="history-info">
+          <div class="history-channel-name">${item.name}</div>
+          <div class="history-timestamp">${timeAgo}</div>
+        </div>
+        <div class="history-colors">
+          ${item.colors
+            .map(
+              color =>
+                `<div class="history-color" style="background-color: ${color}"></div>`
+            )
+            .join('')}
+        </div>
+      `;
 
           historyItems.appendChild(historyItem);
         });
@@ -2394,16 +2400,20 @@
         document.getElementById('dominantHslValue').textContent =
           colorResults.dominantColor.hsl;
 
-        updatePaletteGrid(colorResults.palette);
+        originalPalette = [...colorResults.palette];
+        currentPalette = [...colorResults.palette];
+        paletteState = 'default';
+
+        updatePaletteGrid(currentPalette);
         updateHarmonies(colorResults.harmonies);
         document.getElementById('resultsContainer').classList.add('visible');
       }
 
-      function updatePaletteGrid(palette) {
+      function updatePaletteGrid(paletteToDisplay) {
         const paletteGrid = document.getElementById('paletteGrid');
         paletteGrid.innerHTML = '';
 
-        palette.forEach((color, index) => {
+        paletteToDisplay.forEach((color, index) => {
           const colorElement = document.createElement('div');
           colorElement.className = 'palette-color';
           colorElement.style.backgroundColor = color.hex;
@@ -2637,32 +2647,33 @@
         document
           .getElementById('shufflePaletteBtn')
           .addEventListener('click', function () {
-            const paletteGrid = document.getElementById('paletteGrid');
-            const paletteColors = Array.from(paletteGrid.children);
-            const shuffled = shuffleArray(paletteColors);
-
-            paletteGrid.innerHTML = '';
-            shuffled.forEach(color => paletteGrid.appendChild(color));
+            currentPalette = shuffleArray(currentPalette);
+            paletteState = 'shuffled';
+            document
+              .getElementById('sortPaletteBtn')
+              .classList.remove('active-sort');
+            updatePaletteGrid(currentPalette);
+            showToast('Palette shuffled');
           });
 
         document
           .getElementById('sortPaletteBtn')
           .addEventListener('click', function () {
-            const paletteGrid = document.getElementById('paletteGrid');
-            const paletteColors = Array.from(paletteGrid.children);
-
-            const colors = paletteColors.map(el => {
-              const bgColor = el.style.backgroundColor;
-              const rgb = bgColor.match(/\d+/g).map(Number);
-              return { element: el, color: formatColorData(rgb) };
-            });
-
-            const sorted = colors.sort(
-              (a, b) => a.color.hslObj.h - b.color.hslObj.h
+            if (paletteState === 'sorted') {
+              currentPalette = [...originalPalette];
+              paletteState = 'default';
+              this.classList.remove('active-sort');
+            } else {
+              currentPalette = sortPaletteByHue(currentPalette);
+              paletteState = 'sorted';
+              this.classList.add('active-sort');
+            }
+            updatePaletteGrid(currentPalette);
+            showToast(
+              paletteState === 'sorted'
+                ? 'Palette sorted by hue'
+                : 'Palette reset'
             );
-
-            paletteGrid.innerHTML = '';
-            sorted.forEach(item => paletteGrid.appendChild(item.element));
           });
 
         document.querySelectorAll('.copy-button').forEach(button => {
@@ -2705,13 +2716,10 @@
               .textContent.match(/\d+/g)
               .map(Number);
 
-            const paletteColors = Array.from(
-              document.querySelectorAll('.palette-color')
-            ).map(el => {
-              const bgColor = el.style.backgroundColor;
-              const rgb = bgColor.match(/\d+/g).map(Number);
-              return formatColorData(rgb);
-            });
+            // Use the current palette for CSS generation
+            const paletteColors = currentPalette.map(color =>
+              formatColorData(color.rgbArray)
+            );
 
             const colors = {
               vibrantColor: formatColorData(vibrantRgb),
@@ -2726,11 +2734,7 @@
         document
           .getElementById('exportPngBtn')
           .addEventListener('click', function () {
-            const paletteColors = Array.from(
-              document.querySelectorAll('.palette-color')
-            ).map(el => {
-              return el.style.backgroundColor;
-            });
+            const paletteColors = currentPalette.map(color => color.hex);
 
             const profileImgSrc = document.getElementById('profileImg').src;
             const img = new Image();
