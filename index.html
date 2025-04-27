@@ -2198,7 +2198,7 @@
 
         history.unshift(historyItem);
 
-        const trimmedHistory = history.slice(0, 10);
+        const trimmedHistory = history.slice(0, 50);
 
         localStorage.setItem('channelHistory', JSON.stringify(trimmedHistory));
 
