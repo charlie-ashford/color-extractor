@@ -866,7 +866,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  if (localStorage.getItem('darkMode') === 'true') {
+  if (localStorage.getItem('darkMode') !== 'false') {
     document.body.classList.add('dark-mode');
     themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
   }
