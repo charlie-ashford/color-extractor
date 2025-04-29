@@ -591,18 +591,22 @@ async function analyzeChannel(channelIdOrName) {
     document.getElementById('errorMessage').style.display = 'none';
     document.getElementById('resultsContainer').classList.remove('visible');
 
-    if (channelIdOrName.toLowerCase().trim() === "the goat") {
-      channelIdOrName = "UC-lHJZR3Gqxm24_Vd_AJ5Yw";
-    }
-    let channelId = extractChannelId(channelIdOrName);
+    let channelId;
+    const lowerCaseInput = channelIdOrName.toLowerCase().trim();
 
-    if (!isValidChannelId(channelId) && !channelId.startsWith('@')) {
+    if (lowerCaseInput === "the goat") {
+      channelId = "UC-lHJZR3Gqxm24_Vd_AJ5Yw";
+    } else {
+      channelId = extractChannelId(channelIdOrName);
+
+      if (!isValidChannelId(channelId) && !channelId.startsWith('@')) {
       try {
         channelId = await searchChannelByName(channelIdOrName);
       } catch (searchError) {
         console.error('Search error:', searchError);
       }
     }
+  }
 
     const channelData = await fetchChannelData(channelId);
     const colorResults = await analyzePalette(
