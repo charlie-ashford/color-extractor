@@ -640,6 +640,7 @@ function setupImageUpload() {
   const removeImage = document.getElementById('removeImage');
   const uploadContent = document.querySelector('.upload-content');
   const originalText = uploadContent.querySelector('p').textContent;
+  let activeContextMenu = null;
 
   uploadArea.addEventListener('click', () => {
     imageUpload.click();
@@ -684,7 +685,6 @@ function setupImageUpload() {
     imageUpload.value = '';
   });
 
-  // Standard paste handling
   document.addEventListener('paste', e => {
     const activeElement = document.activeElement;
     const isInput =
@@ -695,9 +695,13 @@ function setupImageUpload() {
     }
   });
 
-  // Right-click context menu
   uploadArea.addEventListener('contextmenu', e => {
     e.preventDefault();
+
+    if (activeContextMenu) {
+      document.body.removeChild(activeContextMenu);
+      activeContextMenu = null;
+    }
 
     const contextMenu = document.createElement('div');
     contextMenu.className = 'custom-context-menu';
@@ -711,9 +715,9 @@ function setupImageUpload() {
     contextMenu.style.left = `${e.clientX}px`;
 
     document.body.appendChild(contextMenu);
+    activeContextMenu = contextMenu; 
 
     document.getElementById('pasteImage').addEventListener('click', () => {
-      // Use the modern Clipboard API
       navigator.clipboard
         .read()
         .then(clipboardItems => {
@@ -732,14 +736,24 @@ function setupImageUpload() {
         .catch(err => {
           console.error('Failed to read clipboard: ', err);
           showToast('Please use Ctrl+V to paste image');
+        })
+        .finally(() => {
+          if (activeContextMenu) {
+            document.body.removeChild(activeContextMenu);
+            activeContextMenu = null;
+          }
         });
 
-      document.body.removeChild(contextMenu);
+      if (activeContextMenu) {
+        document.body.removeChild(activeContextMenu);
+        activeContextMenu = null;
+      }
     });
 
     const closeMenu = e => {
-      if (!contextMenu.contains(e.target)) {
-        document.body.removeChild(contextMenu);
+      if (activeContextMenu && !activeContextMenu.contains(e.target)) {
+        document.body.removeChild(activeContextMenu);
+        activeContextMenu = null;
         document.removeEventListener('click', closeMenu);
       }
     };
@@ -748,6 +762,20 @@ function setupImageUpload() {
       document.addEventListener('click', closeMenu);
     }, 100);
   });
+
+  document.addEventListener('click', (e) => {
+    if (activeContextMenu && !activeContextMenu.contains(e.target) && e.button !== 2) { 
+      document.body.removeChild(activeContextMenu);
+      activeContextMenu = null;
+    }
+  });
+
+  document.addEventListener('scroll', () => {
+    if (activeContextMenu) {
+      document.body.removeChild(activeContextMenu);
+      activeContextMenu = null;
+    }
+  }, true);
 }
 
 function handlePaste(e) {
