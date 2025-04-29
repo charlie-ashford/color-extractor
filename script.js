@@ -576,6 +576,7 @@ function isValidChannelId(id) {
 function updateUrlWithChannelId(channelId) {
   const url = new URL(window.location.href);
   url.searchParams.set('id', channelId);
+  url.searchParams.delete('type');
   window.history.pushState({ channelId }, '', url);
 }
 
@@ -600,13 +601,13 @@ async function analyzeChannel(channelIdOrName) {
       channelId = extractChannelId(channelIdOrName);
 
       if (!isValidChannelId(channelId) && !channelId.startsWith('@')) {
-      try {
-        channelId = await searchChannelByName(channelIdOrName);
-      } catch (searchError) {
-        console.error('Search error:', searchError);
+        try {
+          channelId = await searchChannelByName(channelIdOrName);
+        } catch (searchError) {
+          console.error('Search error:', searchError);
+        }
       }
     }
-  }
 
     const channelData = await fetchChannelData(channelId);
     const colorResults = await analyzePalette(
