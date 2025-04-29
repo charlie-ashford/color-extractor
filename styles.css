@@ -90,6 +90,7 @@ body.dark-mode .example-chip {
 
 body.dark-mode .example-chip:hover {
   background: #3d3d3d;
+  box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.4);
 }
 
 body.dark-mode .palette-header,
@@ -137,6 +138,7 @@ body.dark-mode .stat-badge {
 body.dark-mode .palette-action-btn:hover,
 body.dark-mode .export-btn:hover {
   background: #3d3d3d;
+  box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.4);
 }
 
 body.dark-mode .scheme-title,
@@ -296,6 +298,7 @@ button:active {
 
 .example-chip:hover {
   background: #e0e0e0;
+  box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.4); 
 }
 
 .example-chip i {
@@ -838,6 +841,7 @@ body.dark-mode .color-value:hover {
 .export-btn:hover {
   background: #e0e0e0;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.4);
 }
 
 .export-btn i {
