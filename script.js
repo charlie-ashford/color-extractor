@@ -586,6 +586,7 @@ function getChannelIdFromUrl() {
 
 async function analyzeChannel(channelIdOrName) {
   try {
+    clearUploadedImage();
     document.getElementById('loading').style.display = 'flex';
     document.getElementById('errorMessage').style.display = 'none';
     document.getElementById('resultsContainer').classList.remove('visible');
@@ -608,6 +609,236 @@ async function analyzeChannel(channelIdOrName) {
     updateUI(channelData, colorResults);
     saveToHistory(channelData, colorResults);
     updateUrlWithChannelId(channelData.channelDetails.id);
+
+    document.querySelector('.channel-card').style.display = 'flex';
+    document.getElementById('subscribers').style.display = 'flex';
+    document.getElementById('videoCount').style.display = 'flex';
+    document.getElementById('viewCount').style.display = 'flex';
+
+    return { channelData, colorResults };
+  } catch (error) {
+    document.getElementById('errorMessage').textContent = error.message;
+    document.getElementById('errorMessage').style.display = 'block';
+    console.error(error);
+  } finally {
+    document.getElementById('loading').style.display = 'none';
+  }
+}
+
+function setupImageUpload() {
+  const uploadArea = document.getElementById('uploadArea');
+  const imageUpload = document.getElementById('imageUpload');
+  const uploadedPreview = document.getElementById('uploadedPreview');
+  const uploadedImage = document.getElementById('uploadedImage');
+  const removeImage = document.getElementById('removeImage');
+  const uploadContent = document.querySelector('.upload-content');
+  const originalText = uploadContent.querySelector('p').textContent;
+
+  uploadArea.addEventListener('click', () => {
+    imageUpload.click();
+  });
+
+  imageUpload.addEventListener('change', handleFileSelect);
+
+  uploadArea.addEventListener('dragover', e => {
+    e.preventDefault();
+    uploadArea.classList.add('drag-over');
+
+    uploadContent.querySelector('i').className = 'fas fa-file-import';
+    uploadContent.querySelector('p').textContent = 'Drop image here';
+    uploadContent.classList.add('drop-active');
+  });
+
+  uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('drag-over');
+
+    uploadContent.querySelector('i').className = 'fas fa-cloud-upload-alt';
+    uploadContent.querySelector('p').textContent = originalText;
+    uploadContent.classList.remove('drop-active');
+  });
+
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    uploadContent.classList.remove('drop-active');
+
+    uploadContent.querySelector('i').className = 'fas fa-cloud-upload-alt';
+    uploadContent.querySelector('p').textContent = originalText;
+
+    if (e.dataTransfer.files.length) {
+      handleFiles(e.dataTransfer.files);
+    }
+  });
+
+  removeImage.addEventListener('click', e => {
+    e.stopPropagation();
+    uploadedPreview.classList.remove('visible');
+    uploadedImage.src = '';
+    imageUpload.value = '';
+  });
+
+  // Standard paste handling
+  document.addEventListener('paste', e => {
+    const activeElement = document.activeElement;
+    const isInput =
+      activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA';
+
+    if (!isInput) {
+      handlePaste(e);
+    }
+  });
+
+  // Right-click context menu
+  uploadArea.addEventListener('contextmenu', e => {
+    e.preventDefault();
+
+    const contextMenu = document.createElement('div');
+    contextMenu.className = 'custom-context-menu';
+    contextMenu.innerHTML = `
+      <div class="context-menu-item" id="pasteImage">
+        <i class="fas fa-paste"></i> Paste Image
+      </div>
+    `;
+
+    contextMenu.style.top = `${e.clientY}px`;
+    contextMenu.style.left = `${e.clientX}px`;
+
+    document.body.appendChild(contextMenu);
+
+    document.getElementById('pasteImage').addEventListener('click', () => {
+      // Use the modern Clipboard API
+      navigator.clipboard
+        .read()
+        .then(clipboardItems => {
+          for (const clipboardItem of clipboardItems) {
+            for (const type of clipboardItem.types) {
+              if (type.startsWith('image/')) {
+                clipboardItem.getType(type).then(blob => {
+                  handleImageFile(blob);
+                  showToast('Image pasted from clipboard');
+                });
+                break;
+              }
+            }
+          }
+        })
+        .catch(err => {
+          console.error('Failed to read clipboard: ', err);
+          showToast('Please use Ctrl+V to paste image');
+        });
+
+      document.body.removeChild(contextMenu);
+    });
+
+    const closeMenu = e => {
+      if (!contextMenu.contains(e.target)) {
+        document.body.removeChild(contextMenu);
+        document.removeEventListener('click', closeMenu);
+      }
+    };
+
+    setTimeout(() => {
+      document.addEventListener('click', closeMenu);
+    }, 100);
+  });
+}
+
+function handlePaste(e) {
+  const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+
+  if (!items) return;
+
+  for (const item of items) {
+    if (item.type.indexOf('image') === 0) {
+      const blob = item.getAsFile();
+      handleImageFile(blob);
+      showToast('Image pasted from clipboard');
+      break;
+    }
+  }
+}
+
+function clearUploadedImage() {
+  const uploadedPreview = document.getElementById('uploadedPreview');
+  const uploadedImage = document.getElementById('uploadedImage');
+  const imageUpload = document.getElementById('imageUpload');
+
+  uploadedPreview.classList.remove('visible');
+  uploadedImage.src = '';
+  imageUpload.value = '';
+}
+
+function handleFileSelect(e) {
+  if (e.target.files.length) {
+    handleFiles(e.target.files);
+  }
+}
+
+function handleFiles(files) {
+  const file = files[0];
+
+  if (!file.type.match('image.*')) {
+    showToast('Please select an image file');
+    return;
+  }
+
+  document.getElementById('channelIdInput').value = '';
+
+  handleImageFile(file);
+}
+
+function handleImageFile(file) {
+  document.getElementById('channelIdInput').value = '';
+  const reader = new FileReader();
+
+  reader.onload = async e => {
+    try {
+      const uploadedPreview = document.getElementById('uploadedPreview');
+      const uploadedImage = document.getElementById('uploadedImage');
+
+      uploadedImage.src = e.target.result;
+      uploadedPreview.classList.add('visible');
+
+      await analyzeUploadedImage(e.target.result);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      showToast('Error processing image');
+    }
+  };
+
+  reader.readAsDataURL(file);
+}
+
+async function analyzeUploadedImage(imageUrl) {
+  try {
+    document.getElementById('loading').style.display = 'flex';
+    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('resultsContainer').classList.remove('visible');
+
+    const colorResults = await analyzePalette(imageUrl);
+
+    const channelData = {
+      channelDetails: {
+        id: 'uploaded_' + Date.now(),
+        name: 'Uploaded Image',
+        profilePicture: imageUrl,
+        subscriberCount: null,
+        videoCount: null,
+        viewCount: null,
+      },
+    };
+
+    updateUI(channelData, colorResults);
+
+    document.getElementById('subscribers').style.display = 'none';
+    document.getElementById('videoCount').style.display = 'none';
+    document.getElementById('viewCount').style.display = 'none';
+    document.querySelector('.channel-card').style.display = 'none';
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete('id');
+    url.searchParams.set('type', 'upload');
+    window.history.pushState({ type: 'upload' }, '', url);
 
     return { channelData, colorResults };
   } catch (error) {
@@ -641,6 +872,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   setupEventListeners();
+  setupImageUpload();
   updateHistoryUI();
 
   const urlChannelId = getChannelIdFromUrl();
@@ -670,6 +902,13 @@ function setupEventListeners() {
     if (event.state && event.state.channelId) {
       document.getElementById('channelIdInput').value = event.state.channelId;
       analyzeChannel(event.state.channelId);
+    } else if (event.state && event.state.type === 'upload') {
+    } else {
+      const urlChannelId = getChannelIdFromUrl();
+      if (urlChannelId) {
+        document.getElementById('channelIdInput').value = urlChannelId;
+        analyzeChannel(urlChannelId);
+      }
     }
   });
 
@@ -677,6 +916,7 @@ function setupEventListeners() {
   analyzeBtn.addEventListener('click', function () {
     const channelId = document.getElementById('channelIdInput').value.trim();
     if (channelId) {
+      clearUploadedImage();
       analyzeChannel(channelId);
     } else {
       document.getElementById('errorMessage').textContent =
@@ -690,6 +930,7 @@ function setupEventListeners() {
     chip.addEventListener('click', function () {
       const channelId = this.dataset.id;
       document.getElementById('channelIdInput').value = channelId;
+      clearUploadedImage();
       analyzeChannel(channelId);
     });
   });
@@ -699,6 +940,7 @@ function setupEventListeners() {
     if (e.key === 'Enter') {
       const channelId = this.value.trim();
       if (channelId) {
+        clearUploadedImage();
         analyzeChannel(channelId);
       }
     }
@@ -818,6 +1060,7 @@ function setupEventListeners() {
       if (historyItem) {
         const channelId = historyItem.dataset.channelId;
         document.getElementById('channelIdInput').value = channelId;
+        clearUploadedImage();
         analyzeChannel(channelId);
       }
     });
