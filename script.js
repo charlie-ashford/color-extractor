@@ -591,6 +591,9 @@ async function analyzeChannel(channelIdOrName) {
     document.getElementById('errorMessage').style.display = 'none';
     document.getElementById('resultsContainer').classList.remove('visible');
 
+    if (channelIdOrName.toLowerCase().trim() === "the goat") {
+      channelIdOrName = "UC-lHJZR3Gqxm24_Vd_AJ5Yw";
+    }
     let channelId = extractChannelId(channelIdOrName);
 
     if (!isValidChannelId(channelId) && !channelId.startsWith('@')) {
