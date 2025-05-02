@@ -374,7 +374,7 @@ async function analyzePalette(imageUrl) {
 async function fetchChannelData(channelId) {
   try {
     const response = await fetch(
-      `https://ests.sctools.org/api/get/${channelId}`
+      `https://mixerno.space/api/youtube-channel-counter/user/${channelId}`
     );
     if (!response.ok) {
       throw new Error('Channel not found or API error');
@@ -382,14 +382,20 @@ async function fetchChannelData(channelId) {
 
     const data = await response.json();
 
+    const getCount = (key) => data.counts.find(entry => entry.value === key)?.count;
+    const getUser = (key) => data.user.find(entry => entry.value === key)?.count;
+
+    const rawPfp = getUser("pfp");
+    const proxiedPfp = `https://corsproxy.io/?url=${encodeURIComponent(rawPfp)}`;
+
     return {
       channelDetails: {
-        id: data.info.id,
-        name: data.info.name,
-        profilePicture: data.info.avatar,
-        subscriberCount: data.stats.apiCount,
-        videoCount: data.stats.videoCount,
-        viewCount: data.stats.viewCount,
+        id: channelId,
+        name: getUser("name"),
+        profilePicture: proxiedPfp,
+        subscriberCount: getCount("apisubscribers"),
+        videoCount: getCount("videos"),
+        viewCount: getCount("apiviews"),
       },
     };
   } catch (error) {
