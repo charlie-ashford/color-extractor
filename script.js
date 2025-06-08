@@ -385,20 +385,21 @@ async function fetchChannelData(channelId) {
     const getCount = (key) => data.counts.find(entry => entry.value === key)?.count;
     const getUser = (key) => data.user.find(entry => entry.value === key)?.count;
 
-    const profilePicture = `https://www.banner.yt/${channelId}/avatar`;
-    const corsPfp = `https://corsproxy.io/?url=${encodeURIComponent(profilePicture)}`;
+    const rawPfp = getUser("pfp");
+    const profilePicture = `https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=${encodeURIComponent(rawPfp)}`;
 
     return {
       channelDetails: {
         id: channelId,
         name: getUser("name"),
-        profilePicture: corsPfp,
+        profilePicture: profilePicture,
         subscriberCount: getCount("apisubscribers"),
         videoCount: getCount("videos"),
         viewCount: getCount("apiviews"),
       },
     };
   } catch (error) {
+    console.error("Error fetching channel data:", error);
     throw error;
   }
 }
