@@ -373,33 +373,35 @@ async function analyzePalette(imageUrl) {
 
 async function fetchChannelData(channelId) {
   try {
-    const response = await fetch(
+    const mixernoRes = await fetch(
       `https://mixerno.space/api/youtube-channel-counter/user/${channelId}`
     );
-    if (!response.ok) {
-      throw new Error('Channel not found or API error');
-    }
+    if (!mixernoRes.ok) throw new Error('Mixerno API error');
+    const mixernoData = await mixernoRes.json();
 
-    const data = await response.json();
+    const swRes = await fetch(
+      `https://api.subscriberwars.space/youtube/channel/${channelId}`
+    );
+    if (!swRes.ok) throw new Error('Subscriber Wars API error');
+    const swData = await swRes.json();
 
-    const getCount = (key) => data.counts.find(entry => entry.value === key)?.count;
-    const getUser = (key) => data.user.find(entry => entry.value === key)?.count;
-
-    const rawPfp = getUser("pfp");
-    const profilePicture = `https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=${encodeURIComponent(rawPfp)}`;
+    const getCount = key =>
+      mixernoData.counts.find(entry => entry.value === key)?.count;
+    const getUser = key =>
+      mixernoData.user.find(entry => entry.value === key)?.count;
 
     return {
       channelDetails: {
         id: channelId,
-        name: getUser("name"),
-        profilePicture: profilePicture,
-        subscriberCount: getCount("apisubscribers"),
-        videoCount: getCount("videos"),
-        viewCount: getCount("apiviews"),
+        name: getUser('name'),
+        profilePicture: swData.icon,
+        subscriberCount: getCount('apisubscribers'),
+        videoCount: getCount('videos'),
+        viewCount: getCount('apiviews'),
       },
     };
   } catch (error) {
-    console.error("Error fetching channel data:", error);
+    console.error('Error fetching channel data:', error);
     throw error;
   }
 }
@@ -602,8 +604,8 @@ async function analyzeChannel(channelIdOrName) {
     let channelId;
     const lowerCaseInput = channelIdOrName.toLowerCase().trim();
 
-    if (lowerCaseInput === "the goat") {
-      channelId = "UC-lHJZR3Gqxm24_Vd_AJ5Yw";
+    if (lowerCaseInput === 'the goat') {
+      channelId = 'UC-lHJZR3Gqxm24_Vd_AJ5Yw';
     } else {
       channelId = extractChannelId(channelIdOrName);
 
@@ -723,7 +725,7 @@ function setupImageUpload() {
     contextMenu.style.left = `${e.clientX}px`;
 
     document.body.appendChild(contextMenu);
-    activeContextMenu = contextMenu; 
+    activeContextMenu = contextMenu;
 
     document.getElementById('pasteImage').addEventListener('click', () => {
       navigator.clipboard
@@ -771,19 +773,27 @@ function setupImageUpload() {
     }, 100);
   });
 
-  document.addEventListener('click', (e) => {
-    if (activeContextMenu && !activeContextMenu.contains(e.target) && e.button !== 2) { 
+  document.addEventListener('click', e => {
+    if (
+      activeContextMenu &&
+      !activeContextMenu.contains(e.target) &&
+      e.button !== 2
+    ) {
       document.body.removeChild(activeContextMenu);
       activeContextMenu = null;
     }
   });
 
-  document.addEventListener('scroll', () => {
-    if (activeContextMenu) {
-      document.body.removeChild(activeContextMenu);
-      activeContextMenu = null;
-    }
-  }, true);
+  document.addEventListener(
+    'scroll',
+    () => {
+      if (activeContextMenu) {
+        document.body.removeChild(activeContextMenu);
+        activeContextMenu = null;
+      }
+    },
+    true
+  );
 }
 
 function handlePaste(e) {
