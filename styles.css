@@ -1331,6 +1331,44 @@ body.dark-mode .context-menu-item:hover {
   text-align: center;
 }
 
+.footer {
+  margin-top: 2rem;
+  padding: 1rem 0;
+  text-align: center;
+  border-top: 1px solid var(--border-color, #eaeaea);
+}
+
+.made-by {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  transition: color 0.3s ease;
+}
+
+.made-by i {
+  color: #ff5733;
+  margin: 0 0.2rem;
+}
+
+.made-by a {
+  font-weight: 600;
+  color: var(--accent-color, #ff5733);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.made-by a:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.dark-mode .made-by {
+  color: var(--text-secondary-dark, #aaa);
+}
+
+.dark-mode .made-by a {
+  color: var(--accent-color-dark, #ff7a5c);
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -1885,7 +1923,7 @@ body.dark-mode .context-menu-item:hover {
     background-color: rgba(231, 76, 60, 0.1);
     color: #e74c3c;
   }
-  
+
   .divider {
     margin: 1rem 0;
   }
@@ -1919,7 +1957,7 @@ body.dark-mode .context-menu-item:hover {
   .scheme-colors {
     height: 40px;
   }
-  
+
   .upload-area {
     padding: 0.75rem 0.5rem;
   }
