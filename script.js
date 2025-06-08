@@ -385,14 +385,14 @@ async function fetchChannelData(channelId) {
     const getCount = (key) => data.counts.find(entry => entry.value === key)?.count;
     const getUser = (key) => data.user.find(entry => entry.value === key)?.count;
 
-    const rawPfp = getUser("pfp");
-    const proxiedPfp = `https://corsproxy.io/?url=${encodeURIComponent(rawPfp)}`;
+    const profilePicture = `https://www.banner.yt/${channelId}/avatar`;
+    const corsPfp = `https://corsproxy.io/?url=${encodeURIComponent(profilePicture)}`;
 
     return {
       channelDetails: {
         id: channelId,
         name: getUser("name"),
-        profilePicture: proxiedPfp,
+        profilePicture: corsPfp,
         subscriberCount: getCount("apisubscribers"),
         videoCount: getCount("videos"),
         viewCount: getCount("apiviews"),
