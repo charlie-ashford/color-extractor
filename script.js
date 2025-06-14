@@ -382,7 +382,7 @@ async function fetchChannelData(channelId) {
     const swRes = await fetch(
       `https://api.subscriberwars.space/youtube/channel/${channelId}`
     );
-    if (!swRes.ok) throw new Error('Subscriber Wars API error');
+    if (!swRes.ok) throw new Error('API error');
     const swData = await swRes.json();
 
     const getCount = key =>
