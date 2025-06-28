@@ -373,31 +373,50 @@ async function analyzePalette(imageUrl) {
 
 async function fetchChannelData(channelId) {
   try {
-    const mixernoRes = await fetch(
-      `https://mixerno.space/api/youtube-channel-counter/user/${channelId}`
-    );
-    if (!mixernoRes.ok) throw new Error('Mixerno API error');
-    const mixernoData = await mixernoRes.json();
+    const channelInput = channelId.trim();
+    const isLikelyId = channelInput.startsWith('UC') && channelInput.length === 24;
 
-    const swRes = await fetch(
-      `https://api.subscriberwars.space/youtube/channel/${channelId}`
-    );
-    if (!swRes.ok) throw new Error('API error');
-    const swData = await swRes.json();
+    let channelIdToFetch;
 
-    const getCount = key =>
-      mixernoData.counts.find(entry => entry.value === key)?.count;
-    const getUser = key =>
-      mixernoData.user.find(entry => entry.value === key)?.count;
+    if (!isLikelyId) {
+      try {
+        const searchResponse = await fetch(
+          `https://mixerno.space/api/youtube-channel-counter/search/${encodeURIComponent(
+            channelInput
+          )}`
+        );
+        const searchData = await searchResponse.json();
+
+        if (searchResponse.ok && searchData.list && searchData.list.length > 0) {
+          channelIdToFetch = searchData.list[0][2];
+        } else {
+          throw new Error('Channel not found');
+        }
+      } catch (error) {
+        console.error('Failed to fetch channel ID:', error);
+        throw new Error('Failed to find channel with that name');
+      }
+    } else {
+      channelIdToFetch = channelInput;
+    }
+
+    const apiUrl = `https://api.communitrics.com/${channelIdToFetch}`;
+    const response = await fetch(apiUrl);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch channel data');
+    }
+
+    const data = await response.json();
 
     return {
       channelDetails: {
-        id: channelId,
-        name: getUser('name'),
-        profilePicture: swData.icon,
-        subscriberCount: getCount('apisubscribers'),
-        videoCount: getCount('videos'),
-        viewCount: getCount('apiviews'),
+        id: data.channelDetails.id || channelIdToFetch,
+        name: data.channelDetails.name,
+        profilePicture: data.channelDetails.profilePicture,
+        subscriberCount: data.channelDetails.subscriberCount,
+        videoCount: data.channelDetails.videoCount,
+        viewCount: data.channelDetails.viewCount,
       },
     };
   } catch (error) {
